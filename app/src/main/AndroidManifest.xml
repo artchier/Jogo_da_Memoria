@@ -9,7 +9,7 @@
         android:allowBackup="true"
         android:icon="@drawable/botao_memoria"
         android:label="Jogo da Memória"
-        android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
+        android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen">
         <activity
             android:name="com.adaca.memoria.MainActivity"
             android:label="Jogo da Memória"
@@ -26,7 +26,6 @@
         <activity
             android:name="com.adaca.memoria.Parabens"
             android:label="Jogo da Memória"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
+            android:screenOrientation="portrait"/>
     </application>
 </manifest>
