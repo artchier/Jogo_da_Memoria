@@ -3,13 +3,15 @@ package com.adaca.memoria;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.SeekBar;
@@ -29,278 +31,177 @@ import static android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_M
 import constantes.Constantes;
 
 public class MainActivity extends Activity implements Constantes {
-    MediaPlayer certo, fim;
+    protected MediaPlayer musica, certo, fim;
 
-    float efeitosVolume, musicaVolume;
+    private float efeitosVolume, musicaVolume;
 
-    static MediaPlayer mp;
+    private boolean toggleButtonIsChecked;
 
-    public static String name_c;
-
-    static float new_prog = 0.0F;
-
-    static boolean tgpref;
-
-    int lock;
-
-    View mainView;
-
-    SharedPreferences preferences;
-
-    public void jogar() {
-        //MainActivity2.pontos = 0;
-        //MainActivity2.cont = 0;
-        Collections.shuffle(pos);
-        View paramView = LayoutInflater.from(this).inflate(R.layout.input_dialog, null);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(paramView);
-        builder.setCancelable(false)
-                .setPositiveButton("OK", (dialog, which) -> {
-                    name_c = ((EditText) findViewById(R.id.edt_Name)).getText().toString();
-                    if (name_c.equals("")) {
-                        Toast.makeText(this.getApplicationContext(), "Faltou digitar o nome!!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        //Intent intent = new Intent((Context) this, MainActivity2.class);
-                        //this.startActivity(intent);
-                    }
-                })
-                .setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel());
-        builder.create();
-        builder.show();
-    }
-
-    /*public void lerDados() {
-        SharedPreferences sharedPreferences1 = getSharedPreferences("musica", 0);
-        SharedPreferences sharedPreferences2 = getSharedPreferences("efeitos", 0);
-        SharedPreferences sharedPreferences3 = getSharedPreferences("ctrl", 0);
-        SharedPreferences sharedPreferences4 = getSharedPreferences("valido", 0);
-        SharedPreferences sharedPreferences5 = getSharedPreferences("botao", 0);
-        SharedPreferences sharedPreferences6 = getSharedPreferences("nome", 0);
-        inicial_m = sharedPreferences1.getFloat("musica", 0.0F);
-        inicial_f = sharedPreferences2.getFloat("efeitos", 0.0F);
-        this.vezes = sharedPreferences3.getInt("ctrl", 0);
-        if (this.vezes == 0) {
-            inicial_f = 10.0F;
-            inicial_m = 10.0F;
-        }
-        this.lock = sharedPreferences4.getInt("valido", 0);
-        tgpref = sharedPreferences5.getBoolean("botao", false);
-        name_c = sharedPreferences6.getString("name", null);
-    }*/
+    private View mainView;
 
     protected void onCreate(Bundle paramBundle) {
         super.onCreate(paramBundle);
         setContentView(R.layout.activity_main);
 
-        preferences = getSharedPreferences("preferences", Context.MODE_PRIVATE);
-        fim = MediaPlayer.create(this, R.raw.fim);
-        certo = MediaPlayer.create(this, R.raw.tumm_c5);
-        mp = MediaPlayer.create(this, R.raw.plancton);
-        efeitosVolume = preferences.getFloat("efeitos", 10.0f);
-        musicaVolume = preferences.getFloat("musica", 10.0f);
+        lerPreferencias();
+
+        initMediaPlayers();
+
         this.mainView = getWindow().getDecorView();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
             getWindow().getAttributes().layoutInDisplayCutoutMode = LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
 
+        View optionsDialog = View.inflate(this, R.layout.options, null);
+
+        ToggleButton muteButton = optionsDialog.findViewById(R.id.toggle_sound);
+
+        checkToggleButton(muteButton, toggleButtonIsChecked);
+        SeekBar fx_sB = optionsDialog.findViewById(R.id.fx_seekBar);
+        SeekBar music_sB = optionsDialog.findViewById(R.id.music_seekBar);
+        SeekBar.OnSeekBarChangeListener seekBarListener = new SeekBar.OnSeekBarChangeListener() {
+            float newVolume;
+
+            public void onProgressChanged(SeekBar seekBar, int volume, boolean fromUser) {
+                newVolume = (float) (volume / 10.0);
+                seekBar.setProgress(volume);
+
+                if (!toggleButtonIsChecked) {
+                    if (seekBar.getId() == R.id.fx_seekBar) {
+                        fim.setVolume(newVolume, newVolume);
+                    } else {
+                        musica.setVolume(newVolume, newVolume);
+                    }
+                }
+            }
+
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                if (!toggleButtonIsChecked) {
+                    if (seekBar.getId() == R.id.fx_seekBar) {
+                        musica.pause();
+                        fim.seekTo(0);
+                        fim.start();
+                        fim.setLooping(true);
+                    }
+                }
+            }
+
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                if (!toggleButtonIsChecked) {
+                    if (seekBar.getId() == R.id.fx_seekBar) {
+                        efeitosVolume = newVolume;
+                        certo.setVolume(efeitosVolume, efeitosVolume);
+
+                        fim.pause();
+                        fim.seekTo(0);
+                        fim.setLooping(false);
+                        musica.start();
+
+                        Toast.makeText(getApplicationContext(), "Efeitos: " + (int) (efeitosVolume * 10), Toast.LENGTH_SHORT).show();
+                    } else {
+                        musicaVolume = newVolume;
+                        Toast.makeText(getApplicationContext(), "Música: " + (int) (musicaVolume * 10), Toast.LENGTH_SHORT).show();
+                    }
+
+                    muteButton.setClickable(efeitosVolume != 0 || musicaVolume != 0);
+                }
+            }
+        };
+        try {
+            fx_sB.setMax(10);
+            fx_sB.setKeyProgressIncrement(1);
+            fx_sB.setProgress((int) (efeitosVolume * 10));
+            fx_sB.setOnSeekBarChangeListener(seekBarListener);
+
+            music_sB.setMax(10);
+            music_sB.setProgress((int) (musicaVolume * 10));
+            music_sB.setKeyProgressIncrement(1);
+            music_sB.setOnSeekBarChangeListener(seekBarListener);
+        } catch (Exception ignored) {
+        }
+
         findViewById(R.id.options).setOnClickListener(view -> {
-            View paramView = LayoutInflater.from(this).inflate(R.layout.options, null);
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setView(paramView);
+            if (optionsDialog.getParent() != null) {
+                ((ViewGroup) optionsDialog.getParent()).removeView(optionsDialog);
+            }
+            builder.setView(optionsDialog);
             builder.setCancelable(true);
-            ToggleButton mute = paramView.findViewById(R.id.toggle_sound);
-            mute.setChecked(tgpref);
-            if (!tgpref) {
-                mute.setBackgroundResource(R.drawable.sound_off);
-                if (this.lock == 1)
-                    mute.setClickable(false);
-            } else {
-                mute.setBackgroundResource(R.drawable.sound_in);
-                if (this.lock == 0)
-                    mute.setClickable(true);
-            }
-            if (this.lock == 2) {
-                mute.setBackgroundResource(R.drawable.sound_in);
-                mute.setClickable(false);
-                mute.setChecked(false);
-            }
-            mute.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                public void onCheckedChanged(CompoundButton param1CompoundButton, boolean param1Boolean) {
-                    if (param1Boolean) {
-                        mute.setBackgroundResource(R.drawable.sound_in);
-                        tgpref = true;
-                        mp.setVolume(0.0F, 0.0F);
-                        certo.setVolume(0.0F, 0.0F);
-                        fim.setVolume(0.0F, 0.0F);
-                        return;
-                    }
-                    mute.setBackgroundResource(R.drawable.sound_off);
-                    tgpref = false;
-                    if (musicaVolume != 0.0F)
-                        if (musicaVolume == 10.0F) {
-                            mp.setVolume(1.0F, 1.0F);
-                        } else {
-                            mp.setVolume(musicaVolume / 10.0F, musicaVolume / 10.0F);
-                        }
-                    if (efeitosVolume != 0.0F) {
-                        if (efeitosVolume == 10.0F) {
-                            certo.setVolume(1.0F, 1.0F);
-                            fim.setVolume(1.0F, 1.0F);
-                            return;
-                        }
-                        certo.setVolume(efeitosVolume / 10.0F, efeitosVolume / 10.0F);
-                        fim.setVolume(efeitosVolume / 10.0F, efeitosVolume / 10.0F);
-                    }
+            muteButton.setOnCheckedChangeListener((button, isMuting) -> {
+                if (efeitosVolume != 0 || musicaVolume != 0) {
+                    checkToggleButton(button, isMuting);
+                    setMediaPlayersVolume();
+                } else {
+                    button.setClickable(false);
                 }
             });
             builder.create();
             builder.show();
-            SeekBar music_sB = paramView.findViewById(R.id.music_seekBar);
-            SeekBar fx_sB = paramView.findViewById(R.id.fx_seekBar);
-            try {
-                music_sB.setMax(10);
-                fx_sB.setMax(10);
-                music_sB.setProgress((int) musicaVolume);
-                fx_sB.setProgress((int) efeitosVolume);
-                music_sB.setKeyProgressIncrement(1);
-                fx_sB.setKeyProgressIncrement(1);
-                music_sB.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                    public void onProgressChanged(SeekBar param1SeekBar, int param1Int, boolean param1Boolean) {
-                        if (param1Int == 10) {
-                            new_prog = 1.0F;
-                            musicaVolume = 10.0F;
-                        } else {
-                            new_prog = (float) (param1Int / 10.0D);
-                            musicaVolume = param1Int;
-                        }
-                        mp.setVolume(new_prog, new_prog);
-                        param1SeekBar.setProgress(param1Int);
-                    }
-
-                    public void onStartTrackingTouch(SeekBar param1SeekBar) {
-                    }
-
-                    public void onStopTrackingTouch(SeekBar param1SeekBar) {
-                        if (musicaVolume == 0.0F && efeitosVolume == 0.0F) {
-                            tgpref = true;
-                            mute.setClickable(false);
-                            mute.setBackgroundResource(R.drawable.sound_in);
-                            lock = 2;
-                        } else {
-                            mute.setBackgroundResource(R.drawable.sound_off);
-                            if (musicaVolume == 0.0F || efeitosVolume == 0.0F) {
-                                mute.setClickable(false);
-                                lock = 1;
-                            } else {
-                                mute.setClickable(true);
-                                lock = 0;
-                            }
-                            tgpref = false;
-                        }
-                        Toast.makeText(getApplicationContext(), "Música: "+ (int) musicaVolume, Toast.LENGTH_SHORT).show();
-                    }
-                });
-                fx_sB.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                    public void onProgressChanged(SeekBar param1SeekBar, int param1Int, boolean param1Boolean) {
-                        if (param1Int == 10) {
-                            new_prog = 1.0F;
-                            efeitosVolume = 10.0F;
-                        } else {
-                            new_prog = (float) (param1Int / 10.0D);
-                            efeitosVolume = param1Int;
-                        }
-                        certo.setVolume(new_prog, new_prog);
-                        fim.setVolume(new_prog, new_prog);
-                        param1SeekBar.setProgress(param1Int);
-                    }
-
-                    public void onStartTrackingTouch(SeekBar param1SeekBar) {
-                        mp.pause();
-                        fim.seekTo(0);
-                        fim.setVolume(new_prog, new_prog);
-                        fim.start();
-                        fim.setLooping(true);
-                    }
-
-                    public void onStopTrackingTouch(SeekBar param1SeekBar) {
-                        if (musicaVolume == 0.0F && efeitosVolume == 0.0F) {
-                            tgpref = true;
-                            mute.setClickable(false);
-                            mute.setBackgroundResource(R.drawable.sound_in);
-                            lock = 2;
-                        } else {
-                            mute.setBackgroundResource(R.drawable.sound_off);
-                            if (efeitosVolume == 0.0F || musicaVolume == 0.0F) {
-                                mute.setClickable(false);
-                                lock = 1;
-                            } else {
-                                mute.setClickable(true);
-                                lock = 0;
-                            }
-                            tgpref = false;
-                        }
-                        fim.pause();
-                        fim.seekTo(0);
-                        fim.setLooping(false);
-                        mp.start();
-
-                        Toast.makeText(getApplicationContext(), "Efeitos: "+ (int) efeitosVolume, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            } catch (Exception ignored) {
-            }
         });
-    }
 
-    public boolean onCreateOptionsMenu(Menu paramMenu) {
-        getMenuInflater().inflate(R.menu.options_menu, paramMenu);
-        return true;
+        findViewById(R.id.play).setOnClickListener(view -> {
+            //MainActivity2.pontos = 0;
+            //MainActivity2.cont = 0;
+            Collections.shuffle(pos);
+            View playDialog = LayoutInflater.from(this).inflate(R.layout.input_dialog, null);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setView(playDialog);
+            builder.setCancelable(false)
+                    .setPositiveButton("OK", (dialog, which) -> {
+                        String nome = ((EditText) findViewById(R.id.edt_Name)).getText().toString();
+                        if (nome.equals("")) {
+                            Toast.makeText(this.getApplicationContext(), "Faltou digitar o nome!!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Intent intent = new Intent(this, MainActivity2.class);
+                            this.startActivity(intent);
+                        }
+                    })
+                    .setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel());
+            builder.create();
+            builder.show();
+        });
+
+        findViewById(R.id.quit).setOnClickListener(view -> {
+            finish();
+        });
     }
 
     protected void onDestroy() {
         super.onDestroy();
-        SharedPreferences.Editor savePreferences = preferences.edit();
+        salvarPreferencias();
 
-        savePreferences.putFloat("efeitos", efeitosVolume);
-        savePreferences.putFloat("musica", musicaVolume);
-        savePreferences.putBoolean("botao", tgpref);
-        savePreferences.putString("name", name_c);
-        savePreferences.putInt("valido", lock);
-
-        savePreferences.apply();
-
-        mp.release();
+        musica.release();
         certo.release();
         fim.release();
     }
 
-    /*public boolean onOptionsItemSelected(MenuItem paramMenuItem) {
-        return paramMenuItem.getItemId() == 2131165199 || super.onOptionsItemSelected(paramMenuItem);
-    }*/
-
     protected void onPause() {
         super.onPause();
-        mp.pause();
+        musica.pause();
     }
 
     protected void onResume() {
         super.onResume();
-        mp.setLooping(true);
-        if (true) {//Parabens.i != 1) {
-            mp.seekTo(0);
-            mp.start();
-        } else {
-            mp.start();
-        }
-        if (tgpref == true) {
-            mp.setVolume(0.0F, 0.0F);
-            return;
-        }
-        if (musicaVolume == 10.0F) {
-            mp.setVolume(1.0F, 1.0F);
-            return;
-        }
-        mp.setVolume(musicaVolume / 10.0F, musicaVolume / 10.0F);
+
+        setMediaPlayersVolume();
+
+        // agora funciona, mas depois tem que ter um jeito de tocar na tela de parabéns!!!
+        musica.start();
+//        if (true) {//Parabens.i != 1) {
+//            musica.seekTo(0);
+//            musica.start();
+//        } else {
+//            musica.start();
+//        }
+//        if (tgpref == true) {
+//            musica.setVolume(0.0F, 0.0F);
+//            return;
+//        }
+//        if (musicaVolume == 10.0F) {
+//            musica.setVolume(1.0F, 1.0F);
+//            return;
+//        }
+//        musica.setVolume(musicaVolume / 10.0F, musicaVolume / 10.0F);
     }
 
     public void onWindowFocusChanged(boolean paramBoolean) {
@@ -314,8 +215,54 @@ public class MainActivity extends Activity implements Constantes {
                     | SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
     }
 
+    private void initMediaPlayers() {
+        fim = MediaPlayer.create(this, R.raw.fim);
+        certo = MediaPlayer.create(this, R.raw.tumm_c5);
+        musica = MediaPlayer.create(this, R.raw.plancton);
 
-    public void sair(View paramView) {
-        finish();
+        musica.seekTo(0);
+        musica.setLooping(true);
+    }
+
+    private void setMediaPlayersVolume() {
+        if (!toggleButtonIsChecked) {
+            fim.setVolume(efeitosVolume, efeitosVolume);
+            musica.setVolume(musicaVolume, musicaVolume);
+            certo.setVolume(efeitosVolume, efeitosVolume);
+        } else {
+            fim.setVolume(0, 0);
+            musica.setVolume(0, 0);
+            certo.setVolume(0, 0);
+        }
+    }
+
+
+    void lerPreferencias() {
+        SharedPreferences preferences = getSharedPreferences("preferences", Context.MODE_PRIVATE);
+
+        efeitosVolume = preferences.getFloat("efeitos", 1.0f);
+        musicaVolume = preferences.getFloat("musica", 1.0f);
+        toggleButtonIsChecked = preferences.getBoolean("mudo", false);
+    }
+
+    void salvarPreferencias() {
+        SharedPreferences preferences = getSharedPreferences("preferences", Context.MODE_PRIVATE);
+        SharedPreferences.Editor savePreferences = preferences.edit();
+
+        savePreferences.putFloat("efeitos", efeitosVolume);
+        savePreferences.putFloat("musica", musicaVolume);
+        savePreferences.putBoolean("mudo", toggleButtonIsChecked);
+
+        savePreferences.apply();
+    }
+
+    void checkToggleButton(CompoundButton button, boolean isMuting) {
+        if (!isMuting) {
+            toggleButtonIsChecked = false;
+            button.setBackgroundResource(R.drawable.sound_off);
+        } else {
+            toggleButtonIsChecked = true;
+            button.setBackgroundResource(R.drawable.sound_in);
+        }
     }
 }
