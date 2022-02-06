@@ -1,9 +1,11 @@
 <resources>
-    <string name="app_name">Memoria</string>
-    <string name="options">OPÇÕES</string>
+    <string name="app_name">Jogo da Memória</string>
+    <string name="options">Opções</string>
     <string name="music">Música</string>
     <string name="volume">Volume</string>
     <string name="fx">Efeitos</string>
-    <string name="options_menu">Opções</string>
     <string name="who_s_gonna_play">Quem quer jogar?</string>
+    <string name="jogar">Jogar</string>
+    <string name="quit">Sair</string>
+    <string name="pontos">Pontos:</string>
 </resources>

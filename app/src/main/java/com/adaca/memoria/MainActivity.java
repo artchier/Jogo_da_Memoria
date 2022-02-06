@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +17,6 @@ import android.widget.SeekBar;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import java.util.Collections;
-
 import static android.view.View.SYSTEM_UI_FLAG_FULLSCREEN;
 import static android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
 import static android.view.View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
@@ -28,10 +25,14 @@ import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
 import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
 import static android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
 
+import java.util.Collections;
+
 import constantes.Constantes;
 
 public class MainActivity extends Activity implements Constantes {
-    protected MediaPlayer musica, certo, fim;
+    static private MediaPlayer musica;
+    protected static MediaPlayer certo;
+    static private MediaPlayer fim;
 
     private float efeitosVolume, musicaVolume;
 
@@ -140,15 +141,13 @@ public class MainActivity extends Activity implements Constantes {
         });
 
         findViewById(R.id.play).setOnClickListener(view -> {
-            //MainActivity2.pontos = 0;
-            //MainActivity2.cont = 0;
-            Collections.shuffle(pos);
+            Collections.shuffle(figures);
             View playDialog = LayoutInflater.from(this).inflate(R.layout.input_dialog, null);
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setView(playDialog);
             builder.setCancelable(false)
                     .setPositiveButton("OK", (dialog, which) -> {
-                        String nome = ((EditText) findViewById(R.id.edt_Name)).getText().toString();
+                        String nome = ((EditText) playDialog.findViewById(R.id.etNome)).getText().toString();
                         if (nome.equals("")) {
                             Toast.makeText(this.getApplicationContext(), "Faltou digitar o nome!!", Toast.LENGTH_SHORT).show();
                         } else {

@@ -1,24 +1,26 @@
 package constantes;
 
+import com.adaca.memoria.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public interface Constantes {
     int pecas = 12;
-    List<Integer> pos = new ArrayList<Integer>() {
+    List<Integer> figures = new ArrayList<Integer>() {
         {
-            add(0);
-            add(0);
-            add(1);
-            add(1);
-            add(2);
-            add(2);
-            add(3);
-            add(3);
-            add(4);
-            add(4);
-            add(5);
-            add(5);
+            add((R.drawable.circle));
+            add((R.drawable.circle));
+            add((R.drawable.hexagon));
+            add((R.drawable.hexagon));
+            add((R.drawable.losango));
+            add((R.drawable.losango));
+            add((R.drawable.pentagon));
+            add((R.drawable.pentagon));
+            add((R.drawable.triangulo));
+            add((R.drawable.triangulo));
+            add((R.drawable.square));
+            add((R.drawable.square));
         }
     };
 }

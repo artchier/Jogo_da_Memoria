@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.adaca.memoria">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -9,11 +10,12 @@
         android:allowBackup="true"
         android:icon="@drawable/botao_memoria"
         android:label="Jogo da Memória"
-        android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen">
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity
             android:name="com.adaca.memoria.MainActivity"
-            android:label="Jogo da Memória"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:exported="true"
+            tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -21,11 +23,10 @@
         </activity>
         <activity
             android:name="com.adaca.memoria.MainActivity2"
-            android:label="Jogo da Memória"
-            android:screenOrientation="sensorLandscape" />
-        <activity
+            android:screenOrientation="landscape" />
+        <!--<activity
             android:name="com.adaca.memoria.Parabens"
             android:label="Jogo da Memória"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"/>-->
     </application>
 </manifest>
