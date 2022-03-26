@@ -1,4 +1,3 @@
-/*
 package com.adaca.memoria;
 
 import android.content.Context;
@@ -8,33 +7,29 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Collections;
 
-public class Parabens extends AppCompatActivity {
+public class MainActivity3 extends AppCompatActivity {
     static int i;
 
     View endView;
 
     Animation fadein = (Animation) new AlphaAnimation(0.0F, 1.0F);
 
-    ImageView fogos1;
+    ImageView fogos;
 
-    Button novo;
+    ImageButton novo, voltar;
 
-    ImageView p;
-
-    ImageView star;
-
-    Button voltar;
+    ImageView parabens, estrelas;
 
     public void denovo(View paramView) {
         Intent intent = new Intent((Context) this, MainActivity2.class);
-        MainActivity.mp.pause();
+        MainActivity.musica.pause();
         MainActivity2.pontos = 0;
         Collections.shuffle(MainActivity.pos);
         startActivity(intent);
@@ -43,12 +38,12 @@ public class Parabens extends AppCompatActivity {
 
     protected void onCreate(Bundle paramBundle) {
         super.onCreate(paramBundle);
-        setContentView(2131296282);
-        this.p = (ImageView) findViewById(2131165273);
-        this.star = (ImageView) findViewById(2131165307);
-        this.fogos1 = (ImageView) findViewById(2131165246);
-        this.novo = (Button) findViewById(2131165271);
-        this.voltar = (Button) findViewById(2131165327);
+        setContentView(R.layout.activity_main3);
+        this.parabens = findViewById(R.id.ivParabens);
+        this.estrelas = findViewById(R.id.ivEstrelas);
+        this.fogos = findViewById(R.id.ivFogos);
+        this.novo = findViewById(R.id.ibDeNovo);
+        this.voltar = findViewById(R.id.ibVoltar);
         i = 1;
         this.endView = getWindow().getDecorView();
     }
@@ -58,10 +53,10 @@ public class Parabens extends AppCompatActivity {
         this.fadein.setDuration(3000L);
         this.fadein.setAnimationListener(new Animation.AnimationListener() {
             public void onAnimationEnd(Animation param1Animation) {
-                Parabens.this.fogos1.setBackgroundResource(2131099732);
-                Parabens.this.star.setBackgroundResource(2131099719);
-                AnimationDrawable animationDrawable = (AnimationDrawable) Parabens.this.star.getBackground();
-                ((AnimationDrawable) Parabens.this.fogos1.getBackground()).start();
+                MainActivity3.this.fogos.setBackgroundResource(2131099732);
+                MainActivity3.this.estrelas.setBackgroundResource(2131099719);
+                AnimationDrawable animationDrawable = (AnimationDrawable) MainActivity3.this.estrelas.getBackground();
+                ((AnimationDrawable) MainActivity3.this.fogos.getBackground()).start();
                 animationDrawable.start();
                 if (!MainActivity.tgpref)
                     MainActivity.fim.start();
@@ -75,7 +70,7 @@ public class Parabens extends AppCompatActivity {
                 MainActivity.mp.start();
             }
         });
-        this.p.startAnimation(this.fadein);
+        this.parabens.startAnimation(this.fadein);
         this.novo.startAnimation(this.fadein);
         this.voltar.startAnimation(this.fadein);
     }
@@ -89,4 +84,4 @@ public class Parabens extends AppCompatActivity {
     public void voltar(View paramView) {
         finish();
     }
-}*/
+}

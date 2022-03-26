@@ -1,12 +1,11 @@
-package constantes;
+package figuras;
 
 import com.adaca.memoria.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public interface Constantes {
-    int pecas = 12;
+public interface Figuras {
     List<Integer> figures = new ArrayList<Integer>() {
         {
             add((R.drawable.circle));

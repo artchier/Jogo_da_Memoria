@@ -25,7 +25,7 @@
             android:name="com.adaca.memoria.MainActivity2"
             android:screenOrientation="landscape" />
         <!--<activity
-            android:name="com.adaca.memoria.Parabens"
+            android:name="com.adaca.memoria.MainActivity3"
             android:label="Jogo da Memória"
             android:screenOrientation="portrait"/>-->
     </application>

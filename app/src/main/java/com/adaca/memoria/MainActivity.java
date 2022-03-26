@@ -27,12 +27,10 @@ import static android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_M
 
 import java.util.Collections;
 
-import constantes.Constantes;
+import figuras.Figuras;
 
-public class MainActivity extends Activity implements Constantes {
-    static private MediaPlayer musica;
-    protected static MediaPlayer certo;
-    static private MediaPlayer fim;
+public class MainActivity extends Activity implements Figuras {
+    protected static MediaPlayer certo, fim, musica;
 
     private float efeitosVolume, musicaVolume;
 

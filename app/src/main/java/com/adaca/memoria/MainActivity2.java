@@ -29,37 +29,21 @@ import org.joda.time.ReadableInstant;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import constantes.Constantes;
+import figuras.Figuras;
 import domain.CardWithImageButton;
 
-public class MainActivity2 extends AppCompatActivity implements Constantes {
+public class MainActivity2 extends AppCompatActivity implements Figuras {
     private final List<CardWithImageButton> cardWithImageButtonArrayList = new ArrayList<>();
-
     private TextView ptos;
-
     private View mainView;
-
     private CardWithImageButton primeiraCarta;
-
-    String data;
-
-    String hora;
-
+    String data, hora;
     protected int pontos, dicas, erros = 0;
-
     String resultado;
-
     String time;
-
     boolean acertou;
-
-    DateTime dt;
-
-    DateTime dt2;
-
-    DateTimeFormatter x;
-
-    DateTimeFormatter y;
+    DateTime dt, dt2;
+    DateTimeFormatter x, y;
 
     protected void onCreate(Bundle paramBundle) {
         super.onCreate(paramBundle);

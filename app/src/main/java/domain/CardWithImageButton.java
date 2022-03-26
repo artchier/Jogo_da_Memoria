@@ -1,12 +1,6 @@
 package domain;
 
-import android.content.Context;
-import android.util.AttributeSet;
 import android.widget.ImageButton;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatImageButton;
 
 public class CardWithImageButton {
     private int alternativeBackground;
