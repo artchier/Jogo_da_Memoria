@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -28,33 +29,42 @@ import org.joda.time.ReadableInstant;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import domain.Game;
 import figuras.Figuras;
 import domain.CardWithImageButton;
+import savexport.BancoController;
 import utils.MediaPlayerManager;
+import utils.TimeManager;
 
 public class GameActivity extends AppCompatActivity implements Figuras {
-    private final List<CardWithImageButton> cardWithImageButtonArrayList = new ArrayList<>();
+    private Game game;
+    private List<CardWithImageButton> cardWithImageButtonArrayList;
+    private TimeManager timeManager;
     private MediaPlayerManager mediaPlayerManager;
     private TextView ptos;
     private View mainView;
     private CardWithImageButton primeiraCarta;
-    String data, hora;
-    protected int pontos, dicas, erros = 0;
-    String resultado;
-    String time;
+    protected int pontos, dicas, erros;
+    protected int erros_seguidos = -1;
     boolean acertou;
-    DateTime dt, dt2;
-    DateTimeFormatter x, y;
+
+    private void init() {
+        game = Game.getInstance();
+        timeManager = TimeManager.getInstance();
+        cardWithImageButtonArrayList = new ArrayList<>();
+        mediaPlayerManager = MediaPlayerManager.getInstance(getApplication());
+        mainView = getWindow().getDecorView();
+    }
 
     protected void onCreate(Bundle paramBundle) {
         super.onCreate(paramBundle);
         setContentView(R.layout.activity_game);
 
-        mediaPlayerManager = MediaPlayerManager.getInstance(getApplication());
+        init();
+
+        timeManager.setInicio();
 
         Collections.shuffle(figures);
-
-        mainView = getWindow().getDecorView();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
             getWindow().getAttributes().layoutInDisplayCutoutMode = LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
@@ -80,23 +90,22 @@ public class GameActivity extends AppCompatActivity implements Figuras {
                     if (primeiraCarta != cardWithImageButton) {
                         if (!acertou) {
                             erros++;
-                            dicas++;
-                            Log.d("erros", String.valueOf(erros));
+                            erros_seguidos++;
                         } else {
                             mediaPlayerManager.certo.start();
                             ptos.setText(String.valueOf(++pontos));
-                            dicas = 0;
+                            erros_seguidos = -1;
                             primeiraCarta.getImageButton().setVisibility(View.INVISIBLE);
                             cardWithImageButton.getImageButton().setVisibility(View.INVISIBLE);
                             acertou = false;
 
                             if (pontos == 6) {
-                                startActivity(new Intent(this, InitialActivity.class));
+                                startActivity(new Intent(this, CongratulationsActivity.class));
                                 finish();
                             }
                         }
 
-                        if (erros % 3 == 0) {
+                        if (erros_seguidos == 2) {
                             mostraDica(primeiraCarta);
                             dicas++;
                         }
@@ -134,12 +143,6 @@ public class GameActivity extends AppCompatActivity implements Figuras {
         cardWithImageButtonArrayList.get(9).getImageButton().setOnClickListener(cardClickListener);
         cardWithImageButtonArrayList.get(10).getImageButton().setOnClickListener(cardClickListener);
         cardWithImageButtonArrayList.get(11).getImageButton().setOnClickListener(cardClickListener);
-
-        dt = new DateTime();
-        y = DateTimeFormat.forPattern("dd/MM/yyyy");
-        x = DateTimeFormat.forPattern("HH:mm:ss");
-        data = y.print((ReadableInstant) dt);
-        hora = x.print((ReadableInstant) dt);
     }
 
 
@@ -154,22 +157,26 @@ public class GameActivity extends AppCompatActivity implements Figuras {
                     | SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
     }
 
-        /*protected void onStop () {
-            super.onStop();
-            if (pontos != 6) {
-                this.dt2 = new DateTime();
-                hora = this.x.print((ReadableInstant) this.dt2);
-                time = Tempo.result(this.dt, this.dt2);
-                BancoController bancoController = new BancoController(getBaseContext());
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append(MainActivity.name_c);
-                stringBuilder.append(" (*)");
-                resultado = bancoController.insereDado(stringBuilder.toString(), data, time, this.dicas, this.erros, pontos);
-                Exportacao.Salvadados();
-                Toast.makeText(getApplicationContext(), resultado, 1).show();
-                Toast.makeText(getApplicationContext(), Exportacao.result, 0).show();
-            }
-        }*/
+    protected void onStop() {
+        super.onStop();
+        salvaDados();
+    }
+
+    private void salvaDados() {
+        timeManager.setFim();
+        if (pontos < 6) {
+            game.setNome(game.getNome() + " (*)");
+        }
+        game.setData(timeManager.getDate());
+        game.setHora(timeManager.duracaoPartida());
+        game.setPontos(pontos);
+        game.setDicas(dicas);
+        game.setErros(erros);
+        String resultadoDB = new BancoController(getBaseContext()).insereDado(game);
+//      Exportacao.Salvadados();
+        Toast.makeText(getApplicationContext(), resultadoDB, Toast.LENGTH_LONG).show();
+//        Toast.makeText(getApplicationContext(), Exportacao.result, 0).show();
+    }
 
     private void mostraDica(CardWithImageButton primeiraCarta) {
         CardWithImageButton segundaCarta = null;

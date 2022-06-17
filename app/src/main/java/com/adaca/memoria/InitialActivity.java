@@ -25,30 +25,28 @@ import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
 import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
 import static android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
 
+import domain.Game;
 import utils.MediaPlayerManager;
 
 public class InitialActivity extends Activity {
     private MediaPlayerManager mediaPlayerManager;
-
     private boolean toggleButtonIsChecked;
-
     private View mainView;
+    private Game game;
 
     protected void onCreate(Bundle paramBundle) {
         super.onCreate(paramBundle);
         setContentView(R.layout.activity_initial);
 
+        game = Game.getInstance();
         mediaPlayerManager = MediaPlayerManager.getInstance(this);
-
         mainView = getWindow().getDecorView();
-
         lerPreferencias();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
             getWindow().getAttributes().layoutInDisplayCutoutMode = LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
 
         View optionsDialog = View.inflate(this, R.layout.options, null);
-
         ToggleButton muteButton = optionsDialog.findViewById(R.id.toggle_sound);
 
         checkToggleButton(muteButton, toggleButtonIsChecked);
@@ -58,7 +56,6 @@ public class InitialActivity extends Activity {
             float newVolume;
 
             public void onProgressChanged(SeekBar seekBar, int volume, boolean fromUser) {
-
                 newVolume = (float) (volume / 10.0);
                 seekBar.setProgress(volume);
 
@@ -145,6 +142,7 @@ public class InitialActivity extends Activity {
                         if (nome.equals("")) {
                             Toast.makeText(getApplicationContext(), "Faltou digitar o nome!!", Toast.LENGTH_SHORT).show();
                         } else {
+                            game.setNome(nome);
                             Intent intent = new Intent(this, GameActivity.class);
                             startActivity(intent);
                         }
@@ -175,26 +173,8 @@ public class InitialActivity extends Activity {
 
     protected void onResume() {
         super.onResume();
-
         mediaPlayerManager.setMediaPlayersVolume(toggleButtonIsChecked);
-
-        // agora funciona, mas depois tem que ter um jeito de tocar na tela de parabéns!!!
         mediaPlayerManager.musica.start();
-//        if (true) {//Parabens.i != 1) {
-//            mediaPlayerManager.musica.seekTo(0);
-//            mediaPlayerManager.musica.start();
-//        } else {
-//            mediaPlayerManager.musica.start();
-//        }
-//        if (tgpref == true) {
-//            mediaPlayerManager.musica.setVolume(0.0F, 0.0F);
-//            return;
-//        }
-//        if (musicaVolume == 10.0F) {
-//            mediaPlayerManager.musica.setVolume(1.0F, 1.0F);
-//            return;
-//        }
-//        mediaPlayerManager.musica.setVolume(musicaVolume / 10.0F, musicaVolume / 10.0F);
     }
 
     public void onWindowFocusChanged(boolean paramBoolean) {

@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:importantForAutofill="no"
-        android:inputType="textPersonName"
+        android:inputType="textCapSentences"
         android:textSize="14sp"
         tools:ignore="LabelFor" />
 </LinearLayout>
