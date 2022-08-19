@@ -26,10 +26,10 @@
         android:layout_height="38dp"
         android:background="@drawable/more_options"
         android:clickable="true"
+        android:contentDescription="@string/options"
         android:focusable="true"
         app:layout_constraintEnd_toEndOf="@id/guideline2"
-        app:layout_constraintTop_toBottomOf="@id/guideline"
-        android:contentDescription="@string/options" />
+        app:layout_constraintTop_toBottomOf="@id/guideline" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -45,23 +45,27 @@
             android:background="@drawable/jogo_da_memoria"
             android:contentDescription="@string/app_name" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
 
             <ImageButton
                 android:id="@+id/play"
                 android:layout_width="80dp"
                 android:layout_height="40dp"
+                android:layout_marginBottom="50dp"
                 android:background="@drawable/jogar"
                 android:clickable="true"
-                android:focusable="true"
-                android:layout_marginBottom="220dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:contentDescription="@string/jogar" />
+                android:contentDescription="@string/jogar"
+                android:focusable="true" />
 
             <ImageButton
                 android:id="@+id/quit"
@@ -69,13 +73,8 @@
                 android:layout_height="40dp"
                 android:background="@drawable/sair"
                 android:clickable="true"
-                android:focusable="true"
-                android:layout_marginBottom="230dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/play"
-                android:contentDescription="@string/quit" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </LinearLayout>
+                android:contentDescription="@string/quit"
+                android:focusable="true" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

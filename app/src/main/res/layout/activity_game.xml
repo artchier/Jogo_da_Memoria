@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/background_landscape2">
 
     <androidx.constraintlayout.widget.Guideline
@@ -32,7 +32,6 @@
         app:layout_constraintTop_toTopOf="@id/guideline">
 
         <ImageButton
-            android:contentDescription="figura"
             android:id="@+id/card0"
             android:layout_width="70dp"
             android:layout_height="100dp"
@@ -42,10 +41,11 @@
             android:layout_marginTop="@dimen/margin_cards"
             android:layout_marginEnd="@dimen/margin_cards"
             android:background="@drawable/cartas"
-            tools:ignore='HardcodedText'/>
+            android:contentDescription="figura"
+            android:onClick="cardClickListener"
+            tools:ignore='HardcodedText' />
 
         <ImageButton
-            android:contentDescription="figura"
             android:id="@+id/card1"
             android:layout_width="70dp"
             android:layout_height="100dp"
@@ -55,10 +55,11 @@
             android:layout_marginTop="@dimen/margin_cards"
             android:layout_marginEnd="@dimen/margin_cards"
             android:background="@drawable/cartas"
-            tools:ignore='HardcodedText'/>
+            android:contentDescription="figura"
+            android:onClick="cardClickListener"
+            tools:ignore='HardcodedText' />
 
         <ImageButton
-            android:contentDescription="figura"
             android:id="@+id/card2"
             android:layout_width="70dp"
             android:layout_height="100dp"
@@ -68,10 +69,11 @@
             android:layout_marginTop="@dimen/margin_cards"
             android:layout_marginEnd="@dimen/margin_cards"
             android:background="@drawable/cartas"
-            tools:ignore='HardcodedText'/>
+            android:contentDescription="figura"
+            android:onClick="cardClickListener"
+            tools:ignore='HardcodedText' />
 
         <ImageButton
-            android:contentDescription="figura"
             android:id="@+id/card3"
             android:layout_width="70dp"
             android:layout_height="100dp"
@@ -81,10 +83,11 @@
             android:layout_marginTop="@dimen/margin_cards"
             android:layout_marginEnd="@dimen/margin_cards"
             android:background="@drawable/cartas"
-            tools:ignore='HardcodedText'/>
+            android:contentDescription="figura"
+            android:onClick="cardClickListener"
+            tools:ignore='HardcodedText' />
 
         <ImageButton
-            android:contentDescription="figura"
             android:id="@+id/card4"
             android:layout_width="70dp"
             android:layout_height="100dp"
@@ -94,10 +97,11 @@
             android:layout_marginTop="@dimen/margin_cards"
             android:layout_marginEnd="@dimen/margin_cards"
             android:background="@drawable/cartas"
-            tools:ignore='HardcodedText'/>
+            android:contentDescription="figura"
+            android:onClick="cardClickListener"
+            tools:ignore='HardcodedText' />
 
         <ImageButton
-            android:contentDescription="figura"
             android:id="@+id/card5"
             android:layout_width="70dp"
             android:layout_height="100dp"
@@ -107,10 +111,11 @@
             android:layout_marginTop="@dimen/margin_cards"
             android:layout_marginEnd="@dimen/margin_cards"
             android:background="@drawable/cartas"
-            tools:ignore='HardcodedText'/>
+            android:contentDescription="figura"
+            android:onClick="cardClickListener"
+            tools:ignore='HardcodedText' />
 
         <ImageButton
-            android:contentDescription="figura"
             android:id="@+id/card6"
             android:layout_width="70dp"
             android:layout_height="100dp"
@@ -120,10 +125,11 @@
             android:layout_marginTop="@dimen/margin_cards"
             android:layout_marginEnd="@dimen/margin_cards"
             android:background="@drawable/cartas"
-            tools:ignore='HardcodedText'/>
+            android:contentDescription="figura"
+            android:onClick="cardClickListener"
+            tools:ignore='HardcodedText' />
 
         <ImageButton
-            android:contentDescription="figura"
             android:id="@+id/card7"
             android:layout_width="70dp"
             android:layout_height="100dp"
@@ -133,10 +139,11 @@
             android:layout_marginTop="@dimen/margin_cards"
             android:layout_marginEnd="@dimen/margin_cards"
             android:background="@drawable/cartas"
-            tools:ignore='HardcodedText'/>
+            android:contentDescription="figura"
+            android:onClick="cardClickListener"
+            tools:ignore='HardcodedText' />
 
         <ImageButton
-            android:contentDescription="figura"
             android:id="@+id/card8"
             android:layout_width="70dp"
             android:layout_height="100dp"
@@ -146,10 +153,11 @@
             android:layout_marginTop="@dimen/margin_cards"
             android:layout_marginEnd="@dimen/margin_cards"
             android:background="@drawable/cartas"
-            tools:ignore='HardcodedText'/>
+            android:contentDescription="figura"
+            android:onClick="cardClickListener"
+            tools:ignore='HardcodedText' />
 
         <ImageButton
-            android:contentDescription="figura"
             android:id="@+id/card9"
             android:layout_width="70dp"
             android:layout_height="100dp"
@@ -159,10 +167,11 @@
             android:layout_marginTop="@dimen/margin_cards"
             android:layout_marginEnd="@dimen/margin_cards"
             android:background="@drawable/cartas"
-            tools:ignore='HardcodedText'/>
+            android:contentDescription="figura"
+            android:onClick="cardClickListener"
+            tools:ignore='HardcodedText' />
 
         <ImageButton
-            android:contentDescription="figura"
             android:id="@+id/card10"
             android:layout_width="70dp"
             android:layout_height="100dp"
@@ -172,10 +181,11 @@
             android:layout_marginTop="@dimen/margin_cards"
             android:layout_marginEnd="@dimen/margin_cards"
             android:background="@drawable/cartas"
-            tools:ignore='HardcodedText'/>
+            android:contentDescription="figura"
+            android:onClick="cardClickListener"
+            tools:ignore='HardcodedText' />
 
         <ImageButton
-            android:contentDescription="figura"
             android:id="@+id/card11"
             android:layout_width="70dp"
             android:layout_height="100dp"
@@ -185,7 +195,9 @@
             android:layout_marginTop="@dimen/margin_cards"
             android:layout_marginEnd="@dimen/margin_cards"
             android:background="@drawable/cartas"
-            tools:ignore='HardcodedText'/>
+            android:contentDescription="figura"
+            android:onClick="cardClickListener"
+            tools:ignore='HardcodedText' />
     </GridLayout>
 
     <TextView

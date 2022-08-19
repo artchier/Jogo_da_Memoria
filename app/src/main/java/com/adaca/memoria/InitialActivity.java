@@ -143,7 +143,8 @@ public class InitialActivity extends Activity {
                             Toast.makeText(getApplicationContext(), "Faltou digitar o nome!!", Toast.LENGTH_SHORT).show();
                         } else {
                             game.setNome(nome);
-                            Intent intent = new Intent(this, GameActivity.class);
+                            Intent intent = new Intent(this, CongratulationsActivity.class);
+//                            Intent intent = new Intent(this, GameActivity.class);
                             startActivity(intent);
                         }
                     })

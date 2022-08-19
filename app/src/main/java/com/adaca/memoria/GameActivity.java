@@ -69,53 +69,6 @@ public class GameActivity extends AppCompatActivity implements Figuras {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
             getWindow().getAttributes().layoutInDisplayCutoutMode = LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
 
-        View.OnClickListener cardClickListener = v -> {
-            if (primeiraCarta == null || v.getId() != primeiraCarta.getImageButton().getId()) {
-                String label = v.getResources().getResourceEntryName(v.getId());
-                int indexBackground = Integer.parseInt(label.split("d")[1]);
-                setButtonsClickable(false, indexBackground);
-
-                CardWithImageButton cardWithImageButton = cardWithImageButtonArrayList.get(indexBackground);
-                v.setBackgroundResource(cardWithImageButton.getAlternativeBackground());
-
-                if (primeiraCarta != null) {
-                    acertou = cardWithImageButton.compara(primeiraCarta.getAlternativeBackground());
-                } else {
-                    primeiraCarta = cardWithImageButton;
-                }
-
-                new Handler().postDelayed(() -> {
-                    cardWithImageButton.getImageButton().setBackgroundResource(R.drawable.cartas);
-
-                    if (primeiraCarta != cardWithImageButton) {
-                        if (!acertou) {
-                            erros++;
-                            erros_seguidos++;
-                        } else {
-                            mediaPlayerManager.certo.start();
-                            ptos.setText(String.valueOf(++pontos));
-                            erros_seguidos = -1;
-                            primeiraCarta.getImageButton().setVisibility(View.INVISIBLE);
-                            cardWithImageButton.getImageButton().setVisibility(View.INVISIBLE);
-                            acertou = false;
-
-                            if (pontos == 6) {
-                                startActivity(new Intent(this, CongratulationsActivity.class));
-                                finish();
-                            }
-                        }
-
-                        if (erros_seguidos == 2) {
-                            mostraDica(primeiraCarta);
-                            dicas++;
-                        }
-                        primeiraCarta = null;
-                    }
-                    setButtonsClickable(true, indexBackground);
-                }, 500);
-            }
-        };
-
         cardWithImageButtonArrayList.add(new CardWithImageButton(figures.get(0), findViewById(R.id.card0)));
         cardWithImageButtonArrayList.add(new CardWithImageButton(figures.get(1), findViewById(R.id.card1)));
         cardWithImageButtonArrayList.add(new CardWithImageButton(figures.get(2), findViewById(R.id.card2)));
@@ -130,21 +83,54 @@ public class GameActivity extends AppCompatActivity implements Figuras {
         cardWithImageButtonArrayList.add(new CardWithImageButton(figures.get(11), findViewById(R.id.card11)));
         ptos = findViewById(R.id.tvNumPontos);
         ptos.setText(String.valueOf(pontos));
-
-        cardWithImageButtonArrayList.get(0).getImageButton().setOnClickListener(cardClickListener);
-        cardWithImageButtonArrayList.get(1).getImageButton().setOnClickListener(cardClickListener);
-        cardWithImageButtonArrayList.get(2).getImageButton().setOnClickListener(cardClickListener);
-        cardWithImageButtonArrayList.get(3).getImageButton().setOnClickListener(cardClickListener);
-        cardWithImageButtonArrayList.get(4).getImageButton().setOnClickListener(cardClickListener);
-        cardWithImageButtonArrayList.get(5).getImageButton().setOnClickListener(cardClickListener);
-        cardWithImageButtonArrayList.get(6).getImageButton().setOnClickListener(cardClickListener);
-        cardWithImageButtonArrayList.get(7).getImageButton().setOnClickListener(cardClickListener);
-        cardWithImageButtonArrayList.get(8).getImageButton().setOnClickListener(cardClickListener);
-        cardWithImageButtonArrayList.get(9).getImageButton().setOnClickListener(cardClickListener);
-        cardWithImageButtonArrayList.get(10).getImageButton().setOnClickListener(cardClickListener);
-        cardWithImageButtonArrayList.get(11).getImageButton().setOnClickListener(cardClickListener);
     }
 
+    public void cardClickListener(View v) {
+        if (primeiraCarta == null || v.getId() != primeiraCarta.getImageButton().getId()) {
+            String label = v.getResources().getResourceEntryName(v.getId());
+            int indexBackground = Integer.parseInt(label.split("d")[1]);
+            setButtonsClickable(false, indexBackground);
+
+            CardWithImageButton cardWithImageButton = cardWithImageButtonArrayList.get(indexBackground);
+            v.setBackgroundResource(cardWithImageButton.getAlternativeBackground());
+
+            if (primeiraCarta != null) {
+                acertou = cardWithImageButton.compara(primeiraCarta.getAlternativeBackground());
+            } else {
+                primeiraCarta = cardWithImageButton;
+            }
+
+            new Handler().postDelayed(() -> {
+                cardWithImageButton.getImageButton().setBackgroundResource(R.drawable.cartas);
+
+                if (primeiraCarta != cardWithImageButton) {
+                    if (!acertou) {
+                        erros++;
+                        erros_seguidos++;
+                    } else {
+                        mediaPlayerManager.certo.start();
+                        ptos.setText(String.valueOf(++pontos));
+                        erros_seguidos = -1;
+                        primeiraCarta.getImageButton().setVisibility(View.INVISIBLE);
+                        cardWithImageButton.getImageButton().setVisibility(View.INVISIBLE);
+                        acertou = false;
+
+                        if (pontos == 6) {
+                            startActivity(new Intent(this, CongratulationsActivity.class));
+                            finish();
+                        }
+                    }
+
+                    if (erros_seguidos == 2) {
+                        mostraDica(primeiraCarta);
+                        dicas++;
+                    }
+                    primeiraCarta = null;
+                }
+                setButtonsClickable(true, indexBackground);
+            }, 500);
+        }
+    }
 
     public void onWindowFocusChanged(boolean paramBoolean) {
         super.onWindowFocusChanged(paramBoolean);
@@ -173,9 +159,7 @@ public class GameActivity extends AppCompatActivity implements Figuras {
         game.setDicas(dicas);
         game.setErros(erros);
         String resultadoDB = new BancoController(getBaseContext()).insereDado(game);
-//      Exportacao.Salvadados();
         Toast.makeText(getApplicationContext(), resultadoDB, Toast.LENGTH_LONG).show();
-//        Toast.makeText(getApplicationContext(), Exportacao.result, 0).show();
     }
 
     private void mostraDica(CardWithImageButton primeiraCarta) {

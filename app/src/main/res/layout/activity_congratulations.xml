@@ -19,14 +19,13 @@
             android:layout_height="60dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="100dp"
-            android:background="@drawable/parabens"/>
+            android:background="@drawable/parabens" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/clAnimations"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="90dp"
-            android:alpha="0">
+            android:layout_marginTop="90dp">
 
             <ImageView
                 android:id="@+id/ivEstrelas"
@@ -45,38 +44,39 @@
                 android:layout_width="260dp"
                 android:layout_height="105dp"
                 android:layout_gravity="center_horizontal"
-                android:background="@drawable/fogos_animation"
+                android:background="@drawable/fogos"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="ContentDescription" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/ibDeNovo"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="60dp"
+                android:background="@drawable/jogardenovo"
+                android:clickable="true"
+                android:contentDescription="@string/jogar_de_novo"
+                android:focusable="true" />
+
+            <ImageButton
+                android:id="@+id/ibVoltar"
+                android:layout_width="75dp"
+                android:layout_height="35dp"
+                android:layout_marginTop="50dp"
+                android:background="@drawable/voltar"
+                android:clickable="true"
+                android:contentDescription="@string/quit"
+                android:focusable="true" />
+        </LinearLayout>
     </LinearLayout>
-
-    <ImageButton
-        android:id="@+id/ibDeNovo"
-        android:layout_width="125dp"
-        android:layout_height="50dp"
-        android:background="@drawable/jogardenovo"
-        android:clickable="true"
-        android:focusable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/animation_layout" />
-
-    <ImageButton
-        android:id="@+id/ibVoltar"
-        android:layout_width="80dp"
-        android:layout_height="40dp"
-        android:layout_marginBottom="230dp"
-        android:background="@drawable/voltar"
-        android:clickable="true"
-        android:contentDescription="@string/quit"
-        android:focusable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ibDeNovo" />
 </androidx.constraintlayout.widget.ConstraintLayout>

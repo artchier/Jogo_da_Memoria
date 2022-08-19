@@ -20,18 +20,17 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import utils.MediaPlayerManager;
 
 public class CongratulationsActivity extends AppCompatActivity {
     private MediaPlayerManager mediaPlayerManager;
     private View mainView;
-
     private final Animation fadein = (Animation) new AlphaAnimation(0.0F, 1.0F);
-
     private ImageView fogos, parabens, estrelas;
-
     private ImageButton novo, voltar;
+    private ConstraintLayout clAnimations;
 
     protected void onCreate(Bundle paramBundle) {
         super.onCreate(paramBundle);
@@ -44,6 +43,7 @@ public class CongratulationsActivity extends AppCompatActivity {
         fogos = findViewById(R.id.ivFogos);
         novo = findViewById(R.id.ibDeNovo);
         voltar = findViewById(R.id.ibVoltar);
+        clAnimations = findViewById(R.id.clAnimations);
         mainView = getWindow().getDecorView();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
@@ -61,7 +61,7 @@ public class CongratulationsActivity extends AppCompatActivity {
 
     protected void onResume() {
         super.onResume();
-        fadein.setDuration(3000L);
+        fadein.setDuration(1000L);
         fadein.setAnimationListener(new Animation.AnimationListener() {
             public void onAnimationEnd(Animation param1Animation) {
                 fogos.setBackgroundResource(R.drawable.fogos_animation);
@@ -69,8 +69,7 @@ public class CongratulationsActivity extends AppCompatActivity {
                 AnimationDrawable animationDrawable = (AnimationDrawable) estrelas.getBackground();
                 ((AnimationDrawable) fogos.getBackground()).start();
                 animationDrawable.start();
-                //if (!tgpref)
-                    mediaPlayerManager.fim.start();
+                mediaPlayerManager.fim.start();
             }
 
             public void onAnimationRepeat(Animation param1Animation) {
@@ -82,6 +81,7 @@ public class CongratulationsActivity extends AppCompatActivity {
             }
         });
         parabens.startAnimation(fadein);
+        clAnimations.startAnimation(fadein);
         novo.startAnimation(fadein);
         voltar.startAnimation(fadein);
     }
