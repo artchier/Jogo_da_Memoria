@@ -13,47 +13,65 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.work.WorkManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.joda.time.DateTime;
-import org.joda.time.ReadableInstant;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
-import domain.Game;
-import figuras.Figuras;
-import domain.CardWithImageButton;
+import model.CardWithImageButton;
+import model.Game;
 import savexport.BancoController;
 import utils.MediaPlayerManager;
 import utils.TimeManager;
+import webservice.MemoriaRepository;
+import worker.WorkerUtils;
 
-public class GameActivity extends AppCompatActivity implements Figuras {
-    private Game game;
+public class GameActivity extends AppCompatActivity {
+    private MemoriaRepository memoriaRepository;
+    private String deviceUID;
+    private final List<Integer> figures = new ArrayList<Integer>() {
+        {
+            add((R.drawable.circle));
+            add((R.drawable.circle));
+            add((R.drawable.hexagon));
+            add((R.drawable.hexagon));
+            add((R.drawable.losango));
+            add((R.drawable.losango));
+            add((R.drawable.pentagon));
+            add((R.drawable.pentagon));
+            add((R.drawable.triangulo));
+            add((R.drawable.triangulo));
+            add((R.drawable.square));
+            add((R.drawable.square));
+        }
+    };
+    //    private Game game;
     private List<CardWithImageButton> cardWithImageButtonArrayList;
     private TimeManager timeManager;
     private MediaPlayerManager mediaPlayerManager;
     private TextView ptos;
     private View mainView;
     private CardWithImageButton primeiraCarta;
-    protected int pontos, dicas, erros;
+    protected int acertos, dicas, erros;
     protected int erros_seguidos = -1;
     boolean acertou;
 
     private void init() {
-        game = Game.getInstance();
+//        game = Game.getInstance();
         timeManager = TimeManager.getInstance();
         cardWithImageButtonArrayList = new ArrayList<>();
+        memoriaRepository = MemoriaRepository.getInstance();
         mediaPlayerManager = MediaPlayerManager.getInstance(getApplication());
         mainView = getWindow().getDecorView();
+//        deviceUID = Settings.Secure.getString(getContentResolver(), "bluetooth_name");
     }
 
     protected void onCreate(Bundle paramBundle) {
@@ -82,7 +100,7 @@ public class GameActivity extends AppCompatActivity implements Figuras {
         cardWithImageButtonArrayList.add(new CardWithImageButton(figures.get(10), findViewById(R.id.card10)));
         cardWithImageButtonArrayList.add(new CardWithImageButton(figures.get(11), findViewById(R.id.card11)));
         ptos = findViewById(R.id.tvNumPontos);
-        ptos.setText(String.valueOf(pontos));
+        ptos.setText(String.valueOf(acertos));
     }
 
     public void cardClickListener(View v) {
@@ -109,13 +127,13 @@ public class GameActivity extends AppCompatActivity implements Figuras {
                         erros_seguidos++;
                     } else {
                         mediaPlayerManager.certo.start();
-                        ptos.setText(String.valueOf(++pontos));
+                        ptos.setText(String.valueOf(++acertos));
                         erros_seguidos = -1;
                         primeiraCarta.getImageButton().setVisibility(View.INVISIBLE);
                         cardWithImageButton.getImageButton().setVisibility(View.INVISIBLE);
                         acertou = false;
 
-                        if (pontos == 6) {
+                        if (acertos == 6) {
                             startActivity(new Intent(this, CongratulationsActivity.class));
                             finish();
                         }
@@ -150,15 +168,25 @@ public class GameActivity extends AppCompatActivity implements Figuras {
 
     private void salvaDados() {
         timeManager.setFim();
-        if (pontos < 6) {
-            game.setNome(game.getNome() + " (*)");
-        }
-        game.setData(timeManager.getDate());
-        game.setHora(timeManager.duracaoPartida());
-        game.setPontos(pontos);
+        Game game = new Game();
+//        if (acertos < 6) {
+//            game.setNome(game.getNome() + " (*)");
+//        }
+//        game.setData(timeManager.getDate());
+//        game.setHora(timeManager.duracaoPartida());
+        game.setDeviceUID(Settings.Secure.getString(getContentResolver(), "bluetooth_name"));
+        game.setInicio(timeManager.getDate());
+        game.setDuracao(timeManager.duracaoPartida());
+        game.setAcertos(acertos);
         game.setDicas(dicas);
         game.setErros(erros);
-        String resultadoDB = new BancoController(getBaseContext()).insereDado(game);
+//        String deviceUID = Settings.Secure.getString(getContentResolver(), "bluetooth_name");
+        String resultadoDB = new BancoController(getBaseContext()).insereDado(
+                game
+        );
+        WorkManager.getInstance(this).enqueue(WorkerUtils.addDataToRequest((game.toString())));
+//        memoriaRepository.gravarDados(deviceUID, game);
+
         Toast.makeText(getApplicationContext(), resultadoDB, Toast.LENGTH_LONG).show();
     }
 

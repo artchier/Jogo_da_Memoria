@@ -4,7 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import domain.Game;
+import model.Game;
 
 public class BancoController {
     private final MemoriaDbHelper memoriaDbHelper;
@@ -30,10 +30,9 @@ public class BancoController {
     public String insereDado(Game game) {
         SQLiteDatabase db = this.memoriaDbHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(GameEntry.NOME, game.getNome());
-        contentValues.put(GameEntry.DATA, game.getData());
-        contentValues.put(GameEntry.TJ, game.getHora());
-        contentValues.put(GameEntry.ACERTOS, game.getPontos());
+        contentValues.put(GameEntry.INICIO, game.getInicio());
+        contentValues.put(GameEntry.TJ, game.getDuracao());
+        contentValues.put(GameEntry.ACERTOS, game.getAcertos());
         contentValues.put(GameEntry.DICAS, game.getDicas());
         contentValues.put(GameEntry.ERROS, game.getErros());
         long l = db.insert(GameEntry.TABELA, null, contentValues);

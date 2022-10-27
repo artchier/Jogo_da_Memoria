@@ -6,8 +6,8 @@ import org.joda.time.format.DateTimeFormatter;
 
 public class TimeManager {
     DateTime inicio, fim;
-    DateTimeFormatter horaFormato = DateTimeFormat.forPattern("HH:mm:ss.SSS");
-    DateTimeFormatter dataFormato = DateTimeFormat.forPattern("dd/MM/yyyy");
+    DateTimeFormatter duracaoFormato = DateTimeFormat.forPattern("ss");
+    DateTimeFormatter inicioFormato = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 
     private static TimeManager instance = null;
 
@@ -23,15 +23,14 @@ public class TimeManager {
     }
 
     public String getDate() {
-        return dataFormato.print(inicio.getMillis());
+        return inicioFormato.print(inicio.getMillis());
     }
 
     public String duracaoPartida() {
-        return horaFormato.print(
+        return duracaoFormato.print(
                 fim.minusHours(inicio.getHourOfDay())
                         .minusMinutes(inicio.getMinuteOfHour())
                         .minusSeconds(inicio.getSecondOfMinute())
-                        .minusMillis(inicio.getMillisOfSecond())
         );
     }
 
