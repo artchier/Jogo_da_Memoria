@@ -14,6 +14,8 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface MemoriaService {
+    //https://www.adaca.com.br/jogos-svc/jogos/memoria?DeviceUID
+    //TODO precisa do array list?
     @POST("memoria?")
     Call<GravarDadosResposta> gravarDados(@Query("DeviceUID") String idDispositivo, @Body ArrayList<Game> dados);
 
