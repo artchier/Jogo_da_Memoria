@@ -22,8 +22,8 @@ public class AdacaWorker extends Worker {
     @Override
     public Result doWork() {
         try {
-            Game game = Game.parseGame(getInputData().getString("game"));
-            repository.gravarDados(game.getDeviceUID(), game);
+            Game game = Game.parseGame(Objects.requireNonNull(getInputData().getString("game")));
+            repository.gravarDados(game.getDeviceUID(), game, getApplicationContext());
 
             return Result.success();
         } catch (NullPointerException exception) {

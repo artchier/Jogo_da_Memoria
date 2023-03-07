@@ -1,8 +1,10 @@
 package webservice;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.work.WorkManager;
 
 import java.util.ArrayList;
 
@@ -13,6 +15,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import worker.WorkerUtils;
 
 public class MemoriaRepository {
     private final MemoriaService memoria;
@@ -35,7 +38,7 @@ public class MemoriaRepository {
         memoria = retrofit.create(MemoriaService.class);
     }
 
-    public void gravarDados(String deviceUID, Game dadosPartida) {
+    public void gravarDados(String deviceUID, Game dadosPartida, Context context) {
         ArrayList<Game> dados = new ArrayList<>();
         dados.add(new Game(
                 dadosPartida.getInicio(),
@@ -49,55 +52,52 @@ public class MemoriaRepository {
         gravarDados.enqueue(new Callback<GravarDadosResposta>() {
             @Override
             public void onResponse(@NonNull Call<GravarDadosResposta> call, @NonNull Response<GravarDadosResposta> response) {
-                if (response.body() != null) {
-                    switch (response.code()) {
-                        case 200:
-                            int gravados = response.body().getGravados();
-
-                            if (gravados == 1) {
-                                Log.d("sucesso", "deu bom");
-                            } else {
-                                Log.d("sucesso", "deu ruim");
-                            }
-                            break;
-                    }
+                if (response.isSuccessful() && response.body().getGravados() == 1) {
+                    Log.d("sucesso", "deu bom");
+                } else {
+                    Log.d("sucesso", "deu ruim");
+                    WorkManager.getInstance(context).enqueue(WorkerUtils.addDataToRequest((dadosPartida.toString())));
                 }
             }
 
             @Override
             public void onFailure(Call<GravarDadosResposta> call, Throwable t) {
-
+                Log.d("", "");
             }
         });
     }
 
-    public void gravarDados(String deviceUID, ArrayList<Game> dados) {
-        Call<GravarDadosResposta> gravarDados = memoria.gravarDados(deviceUID, dados);
-
-        gravarDados.enqueue(new Callback<GravarDadosResposta>() {
-            @Override
-            public void onResponse(@NonNull Call<GravarDadosResposta> call, @NonNull Response<GravarDadosResposta> response) {
-                if (response.body() != null) {
-                    switch (response.code()) {
-                        case 200:
-                            int gravados = response.body().getGravados();
-
-                            if (gravados == 1) {
-                                Log.d("sucesso", "deu bom");
-                            } else {
-                                Log.d("sucesso", "deu ruim");
-                            }
-                            break;
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<GravarDadosResposta> call, Throwable t) {
-
-            }
-        });
+    private void Teste() throws Exception {
+        throw new Exception();
     }
+
+//    public void gravarDados(String deviceUID, ArrayList<Game> dados) {
+//        Call<GravarDadosResposta> gravarDados = memoria.gravarDados(deviceUID, dados);
+//
+//        gravarDados.enqueue(new Callback<GravarDadosResposta>() {
+//            @Override
+//            public void onResponse(@NonNull Call<GravarDadosResposta> call, @NonNull Response<GravarDadosResposta> response) {
+//                if (response.body() != null) {
+//                    switch (response.code()) {
+//                        case 200:
+//                            int gravados = response.body().getGravados();
+//
+//                            if (gravados == 1) {
+//                                Log.d("sucesso", "deu bom");
+//                            } else {
+//                                Log.d("sucesso", "deu ruim");
+//                            }
+//                            break;
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<GravarDadosResposta> call, Throwable t) {
+//
+//            }
+//        });
+//    }
 
 //    public List<PegarDadosResposta> pegarDados(String inicio, String fim, String idDispositivo) {
 //        final List<PegarDadosResposta> teste;
