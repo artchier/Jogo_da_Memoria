@@ -66,9 +66,8 @@ public class CongratulationsActivity extends AppCompatActivity {
             public void onAnimationEnd(Animation param1Animation) {
                 fireworks.setBackgroundResource(R.drawable.fogos_animation);
                 stars.setBackgroundResource(R.drawable.estrela_animation);
-                AnimationDrawable animationDrawable = (AnimationDrawable) stars.getBackground();
                 ((AnimationDrawable) fireworks.getBackground()).start();
-                animationDrawable.start();
+                ((AnimationDrawable) stars.getBackground()).start();
                 mediaPlayerManager.endFX.start();
             }
 

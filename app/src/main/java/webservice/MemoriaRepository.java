@@ -56,7 +56,7 @@ public class MemoriaRepository {
                     Log.d("sucesso", "deu bom");
                 } else {
                     Log.d("sucesso", "deu ruim");
-                    WorkManager.getInstance(context).enqueue(WorkerUtils.addDataToRequest((gameData.toString())));
+                    WorkManager.getInstance(context).enqueue(WorkerUtils.addDataToRequest(gameData.toString()));
                 }
             }
 

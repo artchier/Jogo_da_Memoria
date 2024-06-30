@@ -83,7 +83,7 @@ public class GameActivity extends AppCompatActivity {
         points.setText(String.valueOf(hits));
     }
 
-    public void cardClickListener(View imageButton) {
+    public void cardClickListener(ImageButton imageButton) {
         if (firstCard == null || imageButton.getId() != firstCard.getId()) {
             String label = imageButton.getResources().getResourceEntryName(imageButton.getId());
             int indexBackground = Integer.parseInt(label.split("d")[1]);
@@ -96,7 +96,7 @@ public class GameActivity extends AppCompatActivity {
             if (firstCard != null) {
                 hit = ((Integer) firstCard.getTag() == figureBackground);
             } else {
-                firstCard = (ImageButton) imageButton;
+                firstCard = imageButton;
             }
 
             new Handler().postDelayed(() -> {
@@ -163,7 +163,7 @@ public class GameActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), resultDB, Toast.LENGTH_LONG).show();
     }
 
-    private void showTip(View firstCard) {
+    private void showTip(ImageButton firstCard) {
         ArrayList<Integer> possibilities = new ArrayList<>();
 
         for (int index = 0; index < 12; index++) {
@@ -182,7 +182,7 @@ public class GameActivity extends AppCompatActivity {
             possibilities.remove(1);
         }
 
-        View secondCard = findViewById(getResources().getIdentifier(
+        ImageButton secondCard = findViewById(getResources().getIdentifier(
                 "card" + possibilities.get(0),
                 "id",
                 getPackageName()
