@@ -3,48 +3,48 @@
     android:oneshot="true">
     <item
         android:drawable="@drawable/cartas"
-        android:duration="200" />
+        android:duration="@integer/animation_duration" />
     <item
         android:drawable="@drawable/dica"
-        android:duration="200" />
+        android:duration="@integer/animation_duration" />
     <item
         android:drawable="@drawable/cartas"
-        android:duration="200" />
+        android:duration="@integer/animation_duration" />
     <item
         android:drawable="@drawable/cartas"
-        android:duration="200" />
+        android:duration="@integer/animation_duration" />
     <item
         android:drawable="@drawable/dica"
-        android:duration="200" />
+        android:duration="@integer/animation_duration" />
     <item
         android:drawable="@drawable/cartas"
-        android:duration="200" />
+        android:duration="@integer/animation_duration" />
     <item
         android:drawable="@drawable/cartas"
-        android:duration="200" />
+        android:duration="@integer/animation_duration" />
     <item
         android:drawable="@drawable/dica"
-        android:duration="200" />
+        android:duration="@integer/animation_duration" />
     <item
         android:drawable="@drawable/cartas"
-        android:duration="200" />
+        android:duration="@integer/animation_duration" />
     <item
         android:drawable="@drawable/cartas"
-        android:duration="200" />
+        android:duration="@integer/animation_duration" />
     <item
         android:drawable="@drawable/dica"
-        android:duration="200" />
+        android:duration="@integer/animation_duration" />
     <item
         android:drawable="@drawable/cartas"
-        android:duration="200" />
+        android:duration="@integer/animation_duration" />
     <item
         android:drawable="@drawable/cartas"
-        android:duration="200" />
+        android:duration="@integer/animation_duration" />
     <item
         android:drawable="@drawable/dica"
-        android:duration="200" />
+        android:duration="@integer/animation_duration" />
     <item
         android:drawable="@drawable/cartas"
-        android:duration="200" />
+        android:duration="@integer/animation_duration" />
 </animation-list>
 

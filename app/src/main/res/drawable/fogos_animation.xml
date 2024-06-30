@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false">
+    <item
+        android:drawable="@drawable/fogos1"
+        android:duration="200" />
+    <item
+        android:drawable="@drawable/fogos2"
+        android:duration="200" />
+    <item
+        android:drawable="@drawable/fogos3"
+        android:duration="200" />
+    <item
+        android:drawable="@drawable/fogos4"
+        android:duration="200" />
+    <item
+        android:drawable="@drawable/fogos5"
+        android:duration="200" />
+    <item
+        android:drawable="@drawable/fogos6"
+        android:duration="200" />
+    <item
+        android:drawable="@drawable/fogos7"
+        android:duration="200" />
+    <item
+        android:drawable="@drawable/fogos8"
+        android:duration="200" />
+</animation-list>

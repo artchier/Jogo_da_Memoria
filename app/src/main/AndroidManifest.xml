@@ -3,30 +3,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.adaca.memoria">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/botao_memoria"
         android:label="Jogo da Memória"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+        tools:ignore="LockedOrientationActivity">
         <activity
-            android:name="com.adaca.memoria.MainActivity"
+            android:name="com.adaca.memoria.InitialActivity"
             android:screenOrientation="portrait"
-            android:exported="true"
-            tools:ignore="LockedOrientationActivity">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name="com.adaca.memoria.MainActivity2"
-            android:screenOrientation="landscape" />
-        <!--<activity
-            android:name="com.adaca.memoria.Parabens"
-            android:label="Jogo da Memória"
-            android:screenOrientation="portrait"/>-->
+            android:name="com.adaca.memoria.GameActivity"
+            android:screenOrientation="sensorLandscape" />
+        <activity
+            android:name="com.adaca.memoria.CongratulationsActivity"
+            android:screenOrientation="portrait"/>
     </application>
 </manifest>

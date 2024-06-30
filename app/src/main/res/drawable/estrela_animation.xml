@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="true">
+    <item
+        android:drawable="@drawable/estrela"
+        android:duration="50" />
+    <item
+        android:drawable="@drawable/estrela1"
+        android:duration="50" />
+    <item
+        android:drawable="@drawable/estrela2"
+        android:duration="50" />
+    <item
+        android:drawable="@drawable/estrela3"
+        android:duration="50" />
+    <item
+        android:drawable="@drawable/estrela4"
+        android:duration="500" />
+    <item
+        android:drawable="@drawable/estrela5"
+        android:duration="50" />
+    <item
+        android:drawable="@drawable/estrela6"
+        android:duration="50" />
+    <item
+        android:drawable="@drawable/estrela7"
+        android:duration="50" />
+    <item
+        android:drawable="@drawable/estrela8"
+        android:duration="500" />
+    <item
+        android:drawable="@drawable/estrela9"
+        android:duration="50" />
+    <item
+        android:drawable="@drawable/estrela10"
+        android:duration="50" />
+    <item
+        android:drawable="@drawable/estrela11"
+        android:duration="50" />
+    <item
+        android:drawable="@drawable/estrela12"
+        android:duration="500" />
+</animation-list>
