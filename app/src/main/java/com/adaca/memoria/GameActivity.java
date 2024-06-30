@@ -36,18 +36,18 @@ import worker.WorkerUtils;
 public class GameActivity extends AppCompatActivity {
     private final List<Integer> figures = new ArrayList<Integer>() {
         {
-            add((R.drawable.circle));
-            add((R.drawable.circle));
-            add((R.drawable.hexagon));
-            add((R.drawable.hexagon));
-            add((R.drawable.losango));
-            add((R.drawable.losango));
-            add((R.drawable.pentagon));
-            add((R.drawable.pentagon));
-            add((R.drawable.triangulo));
-            add((R.drawable.triangulo));
-            add((R.drawable.square));
-            add((R.drawable.square));
+            add(R.drawable.circle);
+            add(R.drawable.circle);
+            add(R.drawable.hexagon);
+            add(R.drawable.hexagon);
+            add(R.drawable.losango);
+            add(R.drawable.losango);
+            add(R.drawable.pentagon);
+            add(R.drawable.pentagon);
+            add(R.drawable.triangulo);
+            add(R.drawable.triangulo);
+            add(R.drawable.square);
+            add(R.drawable.square);
         }
     };
 
@@ -192,12 +192,6 @@ public class GameActivity extends AppCompatActivity {
         secondCard.setBackgroundResource(R.drawable.dica_animation);
         ((AnimationDrawable) firstCard.getBackground()).start();
         ((AnimationDrawable) secondCard.getBackground()).start();
-
-        new Handler().postDelayed(() ->
-                secondCard.setBackgroundResource(R.drawable.cartas), (long) (
-                (AnimationDrawable) ResourcesCompat.getDrawable(getResources(),
-                        R.drawable.dica_animation,
-                        null)).getNumberOfFrames() * R.integer.animation_duration);
     }
 
     private void setButtonsClickable(boolean clickable) {
