@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +37,7 @@ public class InitialActivity extends Activity {
 
         mediaPlayerManager = MediaPlayerManager.getInstance(this);
         mainView = getWindow().getDecorView();
-        lerPreferencias();
+        readPreferences();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
             getWindow().getAttributes().layoutInDisplayCutoutMode = LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
@@ -58,9 +57,9 @@ public class InitialActivity extends Activity {
 
                 if (!toggleButtonIsChecked) {
                     if (seekBar.getId() == R.id.fx_seekBar) {
-                        mediaPlayerManager.fim.setVolume(newVolume, newVolume);
+                        mediaPlayerManager.endFX.setVolume(newVolume, newVolume);
                     } else {
-                        mediaPlayerManager.musica.setVolume(newVolume, newVolume);
+                        mediaPlayerManager.music.setVolume(newVolume, newVolume);
                     }
                 }
             }
@@ -68,10 +67,10 @@ public class InitialActivity extends Activity {
             public void onStartTrackingTouch(SeekBar seekBar) {
                 if (!toggleButtonIsChecked) {
                     if (seekBar.getId() == R.id.fx_seekBar) {
-                        mediaPlayerManager.musica.pause();
-                        mediaPlayerManager.fim.seekTo(0);
-                        mediaPlayerManager.fim.start();
-                        mediaPlayerManager.fim.setLooping(true);
+                        mediaPlayerManager.music.pause();
+                        mediaPlayerManager.endFX.seekTo(0);
+                        mediaPlayerManager.endFX.start();
+                        mediaPlayerManager.endFX.setLooping(true);
                     }
                 }
             }
@@ -79,32 +78,32 @@ public class InitialActivity extends Activity {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 if (!toggleButtonIsChecked) {
                     if (seekBar.getId() == R.id.fx_seekBar) {
-                        mediaPlayerManager.setEfeitosVolume(newVolume);
-                        mediaPlayerManager.certo.setVolume(newVolume, newVolume);
+                        mediaPlayerManager.setFxVolume(newVolume);
+                        mediaPlayerManager.hitFX.setVolume(newVolume, newVolume);
 
-                        mediaPlayerManager.fim.pause();
-                        mediaPlayerManager.fim.seekTo(0);
-                        mediaPlayerManager.fim.setLooping(false);
-                        mediaPlayerManager.musica.start();
+                        mediaPlayerManager.endFX.pause();
+                        mediaPlayerManager.endFX.seekTo(0);
+                        mediaPlayerManager.endFX.setLooping(false);
+                        mediaPlayerManager.music.start();
 
-                        Toast.makeText(getApplicationContext(), "Efeitos: " + (int) (newVolume * 10), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), getString(R.string.fx_toast) + (int) (newVolume * 10), Toast.LENGTH_SHORT).show();
                     } else {
-                        mediaPlayerManager.setMusicaVolume(newVolume);
-                        Toast.makeText(getApplicationContext(), "Música: " + (int) (newVolume * 10), Toast.LENGTH_SHORT).show();
+                        mediaPlayerManager.setMusicVolume(newVolume);
+                        Toast.makeText(getApplicationContext(), getString(R.string.music_toast) + (int) (newVolume * 10), Toast.LENGTH_SHORT).show();
                     }
 
-                    muteButton.setClickable(mediaPlayerManager.getEfeitosVolume() != 0 || mediaPlayerManager.getMusicaVolume() != 0);
+                    muteButton.setClickable(mediaPlayerManager.getFxVolume() != 0 || mediaPlayerManager.getMusicVolume() != 0);
                 }
             }
         };
         try {
             fx_sB.setMax(10);
             fx_sB.setKeyProgressIncrement(1);
-            fx_sB.setProgress((int) (mediaPlayerManager.getEfeitosVolume() * 10));
+            fx_sB.setProgress((int) (mediaPlayerManager.getFxVolume() * 10));
             fx_sB.setOnSeekBarChangeListener(seekBarListener);
 
             music_sB.setMax(10);
-            music_sB.setProgress((int) (mediaPlayerManager.getMusicaVolume() * 10));
+            music_sB.setProgress((int) (mediaPlayerManager.getMusicVolume() * 10));
             music_sB.setKeyProgressIncrement(1);
             music_sB.setOnSeekBarChangeListener(seekBarListener);
         } catch (Exception ignored) {
@@ -118,7 +117,7 @@ public class InitialActivity extends Activity {
             builder.setView(optionsDialog);
             builder.setCancelable(true);
             muteButton.setOnCheckedChangeListener((button, isMute) -> {
-                if (mediaPlayerManager.getEfeitosVolume() != 0 || mediaPlayerManager.getMusicaVolume() != 0) {
+                if (mediaPlayerManager.getFxVolume() != 0 || mediaPlayerManager.getMusicVolume() != 0) {
                     checkToggleButton(button, isMute);
                     mediaPlayerManager.setMediaPlayersVolume(toggleButtonIsChecked);
                 } else {
@@ -139,7 +138,6 @@ public class InitialActivity extends Activity {
                         if (nome.equals("")) {
                             Toast.makeText(getApplicationContext(), "Faltou digitar o nome!!", Toast.LENGTH_SHORT).show();
                         } else {
-//                            Intent intent = new Intent(this, CongratulationsActivity.class);
                             Intent intent = new Intent(this, GameActivity.class);
                             startActivity(intent);
                         }
@@ -154,24 +152,24 @@ public class InitialActivity extends Activity {
 
     protected void onDestroy() {
         super.onDestroy();
-        mediaPlayerManager.musica.release();
-        mediaPlayerManager.certo.release();
-        mediaPlayerManager.fim.release();
+        mediaPlayerManager.music.release();
+        mediaPlayerManager.hitFX.release();
+        mediaPlayerManager.endFX.release();
 
         MediaPlayerManager.resetInstance();
     }
 
     protected void onPause() {
         super.onPause();
-        salvarPreferencias();
+        savePreferences();
 
-        mediaPlayerManager.musica.pause();
+        mediaPlayerManager.music.pause();
     }
 
     protected void onResume() {
         super.onResume();
         mediaPlayerManager.setMediaPlayersVolume(toggleButtonIsChecked);
-        mediaPlayerManager.musica.start();
+        mediaPlayerManager.music.start();
     }
 
     public void onWindowFocusChanged(boolean paramBoolean) {
@@ -185,20 +183,20 @@ public class InitialActivity extends Activity {
                     | SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
     }
 
-    void lerPreferencias() {
+    void readPreferences() {
         SharedPreferences preferences = getSharedPreferences("preferences", Context.MODE_PRIVATE);
 
-        mediaPlayerManager.setEfeitosVolume(preferences.getFloat("efeitos", 1.0f));
-        mediaPlayerManager.setMusicaVolume(preferences.getFloat("musica", 1.0f));
+        mediaPlayerManager.setFxVolume(preferences.getFloat("efeitos", 1.0f));
+        mediaPlayerManager.setMusicVolume(preferences.getFloat("musica", 1.0f));
         toggleButtonIsChecked = preferences.getBoolean("mudo", false);
     }
 
-    void salvarPreferencias() {
+    void savePreferences() {
         SharedPreferences preferences = getSharedPreferences("preferences", Context.MODE_PRIVATE);
         SharedPreferences.Editor savePreferences = preferences.edit();
 
-        savePreferences.putFloat("efeitos", mediaPlayerManager.getEfeitosVolume());
-        savePreferences.putFloat("musica", mediaPlayerManager.getMusicaVolume());
+        savePreferences.putFloat("efeitos", mediaPlayerManager.getFxVolume());
+        savePreferences.putFloat("musica", mediaPlayerManager.getMusicVolume());
         savePreferences.putBoolean("mudo", toggleButtonIsChecked);
 
         savePreferences.apply();

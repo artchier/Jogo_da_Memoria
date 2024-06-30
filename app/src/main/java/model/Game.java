@@ -16,15 +16,6 @@ public class Game {
         this.erros = erros;
     }
 
-    public Game(String deviceUID, String inicio, String duracao, int acertos, int dicas, int erros) {
-        this.deviceUID = deviceUID;
-        this.inicio = inicio;
-        this.duracao = duracao;
-        this.acertos = acertos;
-        this.dicas = dicas;
-        this.erros = erros;
-    }
-
     public String getDeviceUID() {
         return deviceUID;
     }
@@ -76,11 +67,11 @@ public class Game {
     @Override
     public String toString() {
         return "deviceUID='" + deviceUID + '\'' +
-                ", inicio='" + inicio + '\'' +
-                ", duracao='" + duracao + '\'' +
-                ", acertos=" + acertos +
-                ", dicas=" + dicas +
-                ", erros=" + erros;
+                ", startTime='" + inicio + '\'' +
+                ", gameTime='" + duracao + '\'' +
+                ", hits=" + acertos +
+                ", tips=" + dicas +
+                ", misses=" + erros;
     }
 
     public static Game parseGame(String data) {
@@ -97,21 +88,4 @@ public class Game {
 
         return game;
     }
-
-//    public Game(String nome, String data, String hora, int acertos, int dicas, int erros) {
-//        this.nome = nome;
-//        this.data = data;
-//        this.hora = hora;
-//        this.acertos = acertos;
-//        this.dicas = dicas;
-//        this.erros = erros;
-//    }
-
-//    public static Game getInstance() {
-//        if (instance == null) {
-//            instance = new Game();
-//        }
-//
-//        return instance;
-//    }
 }

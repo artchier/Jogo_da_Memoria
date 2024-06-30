@@ -3,13 +3,13 @@ package model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class GravarDadosResposta {
+public class WriteDataResponse {
     @SerializedName("gravados")
     @Expose
-    int gravados;
+    int savedGames;
 
-    public int getGravados() {
-        return gravados;
+    public int getSavedGames() {
+        return savedGames;
     }
 
     public int getTotal() {
@@ -20,8 +20,8 @@ public class GravarDadosResposta {
     @Expose
     int total;
 
-    public GravarDadosResposta(int gravados, int total) {
-        this.gravados = gravados;
+    public WriteDataResponse(int savedGames, int total) {
+        this.savedGames = savedGames;
         this.total = total;
     }
 }

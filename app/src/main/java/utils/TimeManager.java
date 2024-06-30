@@ -5,32 +5,32 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 public class TimeManager {
-    DateTime inicio, fim;
-    DateTimeFormatter duracaoFormato = DateTimeFormat.forPattern("ss");
-    DateTimeFormatter inicioFormato = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+    DateTime startTime, endTime;
+    DateTimeFormatter gameTimeFormat = DateTimeFormat.forPattern("ss");
+    DateTimeFormatter startTimeFormat = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 
     private static TimeManager instance = null;
 
     public TimeManager() {
     }
 
-    public void setInicio() {
-        inicio = new DateTime();
+    public void setStartTime() {
+        startTime = new DateTime();
     }
 
-    public void setFim() {
-        fim = new DateTime();
+    public void setEndTime() {
+        endTime = new DateTime();
     }
 
     public String getDate() {
-        return inicioFormato.print(inicio.getMillis());
+        return startTimeFormat.print(startTime.getMillis());
     }
 
-    public String duracaoPartida() {
-        return duracaoFormato.print(
-                fim.minusHours(inicio.getHourOfDay())
-                        .minusMinutes(inicio.getMinuteOfHour())
-                        .minusSeconds(inicio.getSecondOfMinute())
+    public String gameTime() {
+        return gameTimeFormat.print(
+                endTime.minusHours(startTime.getHourOfDay())
+                        .minusMinutes(startTime.getMinuteOfHour())
+                        .minusSeconds(startTime.getSecondOfMinute())
         );
     }
 

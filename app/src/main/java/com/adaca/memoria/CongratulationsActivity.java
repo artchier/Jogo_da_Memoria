@@ -27,9 +27,9 @@ import utils.MediaPlayerManager;
 public class CongratulationsActivity extends AppCompatActivity {
     private MediaPlayerManager mediaPlayerManager;
     private View mainView;
-    private final Animation fadein = (Animation) new AlphaAnimation(0.0F, 1.0F);
-    private ImageView fogos, parabens, estrelas;
-    private ImageButton novo, voltar;
+    private final Animation fadein = new AlphaAnimation(0.0F, 1.0F);
+    private ImageView fireworks, congratulations, stars;
+    private ImageButton newGame, quit;
     private ConstraintLayout clAnimations;
 
     protected void onCreate(Bundle paramBundle) {
@@ -38,25 +38,25 @@ public class CongratulationsActivity extends AppCompatActivity {
 
         mediaPlayerManager = MediaPlayerManager.getInstance(getApplication());
 
-        parabens = findViewById(R.id.ivParabens);
-        estrelas = findViewById(R.id.ivEstrelas);
-        fogos = findViewById(R.id.ivFogos);
-        novo = findViewById(R.id.ibDeNovo);
-        voltar = findViewById(R.id.ibVoltar);
+        congratulations = findViewById(R.id.ivParabens);
+        stars = findViewById(R.id.ivEstrelas);
+        fireworks = findViewById(R.id.ivFogos);
+        newGame = findViewById(R.id.ibDeNovo);
+        quit = findViewById(R.id.ibVoltar);
         clAnimations = findViewById(R.id.clAnimations);
         mainView = getWindow().getDecorView();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
             getWindow().getAttributes().layoutInDisplayCutoutMode = LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
 
-        novo.setOnClickListener(view -> {
+        newGame.setOnClickListener(view -> {
             Intent intent = new Intent((Context) this, GameActivity.class);
-            mediaPlayerManager.musica.pause();
+            mediaPlayerManager.music.pause();
             startActivity(intent);
             finish();
         });
 
-        voltar.setOnClickListener(view -> finish());
+        quit.setOnClickListener(view -> finish());
     }
 
     protected void onResume() {
@@ -64,26 +64,26 @@ public class CongratulationsActivity extends AppCompatActivity {
         fadein.setDuration(1000L);
         fadein.setAnimationListener(new Animation.AnimationListener() {
             public void onAnimationEnd(Animation param1Animation) {
-                fogos.setBackgroundResource(R.drawable.fogos_animation);
-                estrelas.setBackgroundResource(R.drawable.estrela_animation);
-                AnimationDrawable animationDrawable = (AnimationDrawable) estrelas.getBackground();
-                ((AnimationDrawable) fogos.getBackground()).start();
+                fireworks.setBackgroundResource(R.drawable.fogos_animation);
+                stars.setBackgroundResource(R.drawable.estrela_animation);
+                AnimationDrawable animationDrawable = (AnimationDrawable) stars.getBackground();
+                ((AnimationDrawable) fireworks.getBackground()).start();
                 animationDrawable.start();
-                mediaPlayerManager.fim.start();
+                mediaPlayerManager.endFX.start();
             }
 
             public void onAnimationRepeat(Animation param1Animation) {
             }
 
             public void onAnimationStart(Animation param1Animation) {
-                mediaPlayerManager.musica.seekTo(0);
-                mediaPlayerManager.musica.start();
+                mediaPlayerManager.music.seekTo(0);
+                mediaPlayerManager.music.start();
             }
         });
-        parabens.startAnimation(fadein);
+        congratulations.startAnimation(fadein);
         clAnimations.startAnimation(fadein);
-        novo.startAnimation(fadein);
-        voltar.startAnimation(fadein);
+        newGame.startAnimation(fadein);
+        quit.startAnimation(fadein);
     }
 
     public void onWindowFocusChanged(boolean paramBoolean) {

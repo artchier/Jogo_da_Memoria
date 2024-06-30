@@ -8,5 +8,7 @@
     <string name="jogar">Jogar</string>
     <string name="jogar_de_novo">Jogar de novo</string>
     <string name="quit">Sair</string>
-    <string name="pontos">Pontos:</string>
+    <string name="points">Pontos:</string>
+    <string name="fx_toast">Efeitos:</string>
+    <string name="music_toast">Música:</string>
 </resources>

@@ -15,28 +15,25 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.work.WorkManager;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import model.CardWithImageButton;
 import model.Game;
-import savexport.BancoController;
+import savexport.DatabaseController;
 import utils.MediaPlayerManager;
 import utils.TimeManager;
-import webservice.MemoriaRepository;
 import worker.WorkerUtils;
 
 public class GameActivity extends AppCompatActivity {
-    private MemoriaRepository memoriaRepository;
-    private String deviceUID;
     private final List<Integer> figures = new ArrayList<Integer>() {
         {
             add((R.drawable.circle));
@@ -53,25 +50,20 @@ public class GameActivity extends AppCompatActivity {
             add((R.drawable.square));
         }
     };
-    //    private Game game;
-    private List<CardWithImageButton> cardWithImageButtonArrayList;
+
     private TimeManager timeManager;
     private MediaPlayerManager mediaPlayerManager;
-    private TextView ptos;
+    private TextView points;
     private View mainView;
-    private CardWithImageButton primeiraCarta;
-    protected int acertos, dicas, erros;
-    protected int erros_seguidos = -1;
-    boolean acertou;
+    private ImageButton firstCard;
+    protected int hits, tips, misses;
+    protected int missesInARow = 0;
+    boolean hit;
 
     private void init() {
-//        game = Game.getInstance();
         timeManager = TimeManager.getInstance();
-        cardWithImageButtonArrayList = new ArrayList<>();
-        memoriaRepository = MemoriaRepository.getInstance();
         mediaPlayerManager = MediaPlayerManager.getInstance(getApplication());
         mainView = getWindow().getDecorView();
-//        deviceUID = Settings.Secure.getString(getContentResolver(), "bluetooth_name");
     }
 
     protected void onCreate(Bundle paramBundle) {
@@ -80,72 +72,60 @@ public class GameActivity extends AppCompatActivity {
 
         init();
 
-        timeManager.setInicio();
+        timeManager.setStartTime();
 
         Collections.shuffle(figures);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
             getWindow().getAttributes().layoutInDisplayCutoutMode = LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
 
-        cardWithImageButtonArrayList.add(new CardWithImageButton(figures.get(0), findViewById(R.id.card0)));
-        cardWithImageButtonArrayList.add(new CardWithImageButton(figures.get(1), findViewById(R.id.card1)));
-        cardWithImageButtonArrayList.add(new CardWithImageButton(figures.get(2), findViewById(R.id.card2)));
-        cardWithImageButtonArrayList.add(new CardWithImageButton(figures.get(3), findViewById(R.id.card3)));
-        cardWithImageButtonArrayList.add(new CardWithImageButton(figures.get(4), findViewById(R.id.card4)));
-        cardWithImageButtonArrayList.add(new CardWithImageButton(figures.get(5), findViewById(R.id.card5)));
-        cardWithImageButtonArrayList.add(new CardWithImageButton(figures.get(6), findViewById(R.id.card6)));
-        cardWithImageButtonArrayList.add(new CardWithImageButton(figures.get(7), findViewById(R.id.card7)));
-        cardWithImageButtonArrayList.add(new CardWithImageButton(figures.get(8), findViewById(R.id.card8)));
-        cardWithImageButtonArrayList.add(new CardWithImageButton(figures.get(9), findViewById(R.id.card9)));
-        cardWithImageButtonArrayList.add(new CardWithImageButton(figures.get(10), findViewById(R.id.card10)));
-        cardWithImageButtonArrayList.add(new CardWithImageButton(figures.get(11), findViewById(R.id.card11)));
-        ptos = findViewById(R.id.tvNumPontos);
-        ptos.setText(String.valueOf(acertos));
+        points = findViewById(R.id.tvNumPontos);
+        points.setText(String.valueOf(hits));
     }
 
-    public void cardClickListener(View v) {
-        if (primeiraCarta == null || v.getId() != primeiraCarta.getImageButton().getId()) {
-            String label = v.getResources().getResourceEntryName(v.getId());
+    public void cardClickListener(View imageButton) {
+        if (firstCard == null || imageButton.getId() != firstCard.getId()) {
+            String label = imageButton.getResources().getResourceEntryName(imageButton.getId());
             int indexBackground = Integer.parseInt(label.split("d")[1]);
-            setButtonsClickable(false, indexBackground);
+            setButtonsClickable(false);
 
-            CardWithImageButton cardWithImageButton = cardWithImageButtonArrayList.get(indexBackground);
-            v.setBackgroundResource(cardWithImageButton.getAlternativeBackground());
+            int figureBackground = figures.get(indexBackground);
+            imageButton.setBackgroundResource(figureBackground);
+            imageButton.setTag(figureBackground);
 
-            if (primeiraCarta != null) {
-                acertou = cardWithImageButton.compara(primeiraCarta.getAlternativeBackground());
+            if (firstCard != null) {
+                hit = ((Integer) firstCard.getTag() == figureBackground);
             } else {
-                primeiraCarta = cardWithImageButton;
+                firstCard = (ImageButton) imageButton;
             }
 
             new Handler().postDelayed(() -> {
-                cardWithImageButton.getImageButton().setBackgroundResource(R.drawable.cartas);
-
-                if (primeiraCarta != cardWithImageButton) {
-                    if (!acertou) {
-                        erros++;
-                        erros_seguidos++;
+                imageButton.setBackgroundResource(R.drawable.cartas);
+                if (firstCard != imageButton) {
+                    if (!hit) {
+                        misses++;
+                        missesInARow++;
                     } else {
-                        mediaPlayerManager.certo.start();
-                        ptos.setText(String.valueOf(++acertos));
-                        erros_seguidos = -1;
-                        primeiraCarta.getImageButton().setVisibility(View.INVISIBLE);
-                        cardWithImageButton.getImageButton().setVisibility(View.INVISIBLE);
-                        acertou = false;
+                        mediaPlayerManager.hitFX.start();
+                        points.setText(String.valueOf(++hits));
+                        missesInARow = 0;
+                        firstCard.setVisibility(View.INVISIBLE);
+                        imageButton.setVisibility(View.INVISIBLE);
+                        hit = false;
 
-                        if (acertos == 6) {
+                        if (hits == 6) {
                             startActivity(new Intent(this, CongratulationsActivity.class));
                             finish();
                         }
                     }
 
-                    if (erros_seguidos == 2) {
-                        mostraDica(primeiraCarta);
-                        dicas++;
+                    if (missesInARow % 3 == 0 && missesInARow > 0) {
+                        showTip(firstCard);
+                        tips++;
                     }
-                    primeiraCarta = null;
+                    firstCard = null;
                 }
-                setButtonsClickable(true, indexBackground);
+                setButtonsClickable(true);
             }, 500);
         }
     }
@@ -163,60 +143,70 @@ public class GameActivity extends AppCompatActivity {
 
     protected void onStop() {
         super.onStop();
-        salvaDados();
+        saveData();
     }
 
-    private void salvaDados() {
-        timeManager.setFim();
+    private void saveData() {
+        timeManager.setEndTime();
         Game game = new Game();
-//        if (acertos < 6) {
-//            game.setNome(game.getNome() + " (*)");
-//        }
-//        game.setData(timeManager.getDate());
-//        game.setHora(timeManager.duracaoPartida());
         game.setDeviceUID(Settings.Secure.getString(getContentResolver(), "bluetooth_name"));
         game.setInicio(timeManager.getDate());
-        game.setDuracao(timeManager.duracaoPartida());
-        game.setAcertos(acertos);
-        game.setDicas(dicas);
-        game.setErros(erros);
-//        String deviceUID = Settings.Secure.getString(getContentResolver(), "bluetooth_name");
-        String resultadoDB = new BancoController(getBaseContext()).insereDado(
+        game.setDuracao(timeManager.gameTime());
+        game.setAcertos(hits);
+        game.setDicas(tips);
+        game.setErros(misses);
+        String resultDB = new DatabaseController(getBaseContext()).insertData(
                 game
         );
         WorkManager.getInstance(this).enqueue(WorkerUtils.addDataToRequest((game.toString())));
-//        memoriaRepository.gravarDados(deviceUID, game);
 
-        Toast.makeText(getApplicationContext(), resultadoDB, Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), resultDB, Toast.LENGTH_LONG).show();
     }
 
-    private void mostraDica(CardWithImageButton primeiraCarta) {
-        CardWithImageButton segundaCarta = null;
+    private void showTip(View firstCard) {
+        ArrayList<Integer> possibilities = new ArrayList<>();
+
         for (int index = 0; index < 12; index++) {
-            if (primeiraCarta.getImageButton().getId() == cardWithImageButtonArrayList.get(index).getImageButton().getId()) {
-                continue;
+            if (firstCard.getTag().equals(figures.get(index))) {
+                possibilities.add(index);
             }
-            if (primeiraCarta.compara(cardWithImageButtonArrayList.get(index).getAlternativeBackground())) {
-                segundaCarta = cardWithImageButtonArrayList.get(index);
-                break;
-            }
+            if (possibilities.size() == 2) break;
         }
-        primeiraCarta.getImageButton().setBackgroundResource(R.drawable.dica_animation);
-        assert segundaCarta != null;
-        segundaCarta.getImageButton().setBackgroundResource(R.drawable.dica_animation);
-        ((AnimationDrawable) primeiraCarta.getImageButton().getBackground()).start();
-        ((AnimationDrawable) segundaCarta.getImageButton().getBackground()).start();
+
+        String firstCardLabel = firstCard.getResources().getResourceEntryName(firstCard.getId());
+        int indexBackground = Integer.parseInt(firstCardLabel.split("d")[1]);
+
+        if (possibilities.get(0) == indexBackground) {
+            possibilities.remove(0);
+        } else {
+            possibilities.remove(1);
+        }
+
+        View secondCard = findViewById(getResources().getIdentifier(
+                "card" + possibilities.get(0),
+                "id",
+                getPackageName()
+        ));
+
+        firstCard.setBackgroundResource(R.drawable.dica_animation);
+        secondCard.setBackgroundResource(R.drawable.dica_animation);
+        ((AnimationDrawable) firstCard.getBackground()).start();
+        ((AnimationDrawable) secondCard.getBackground()).start();
+
+        new Handler().postDelayed(() ->
+                secondCard.setBackgroundResource(R.drawable.cartas), (long) (
+                (AnimationDrawable) ResourcesCompat.getDrawable(getResources(),
+                        R.drawable.dica_animation,
+                        null)).getNumberOfFrames() * R.integer.animation_duration);
     }
 
-    private void setButtonsClickable(boolean clickable, int indexBackground) {
-        if (indexBackground > 0) {
-            for (int index = indexBackground - 1; index >= 0; index--) {
-                cardWithImageButtonArrayList.get(index).getImageButton().setClickable(clickable);
-            }
-        }
-
-        for (int index = indexBackground + 1; index < 12; index++) {
-            cardWithImageButtonArrayList.get(index).getImageButton().setClickable(clickable);
+    private void setButtonsClickable(boolean clickable) {
+        for (int index = 0; index < 12; index++) {
+            findViewById(getResources().getIdentifier(
+                    "card" + index,
+                    "id",
+                    getPackageName()
+            )).setClickable(clickable);
         }
     }
 }

@@ -1,25 +1,24 @@
 package utils;
 
-import android.app.Application;
 import android.content.Context;
 import android.media.MediaPlayer;
 
 import com.adaca.memoria.R;
 
 public class MediaPlayerManager {
-    public final MediaPlayer certo, fim, musica;
+    public final MediaPlayer hitFX, endFX, music;
 
-    private float efeitosVolume, musicaVolume;
+    private float fxVolume, musicVolume;
 
     private static MediaPlayerManager instance = null;
 
     public MediaPlayerManager(Context context) {
-        fim = MediaPlayer.create(context, R.raw.fim);
-        certo = MediaPlayer.create(context, R.raw.tumm_c5);
-        musica = MediaPlayer.create(context, R.raw.plancton);
+        endFX = MediaPlayer.create(context, R.raw.fim);
+        hitFX = MediaPlayer.create(context, R.raw.tumm_c5);
+        music = MediaPlayer.create(context, R.raw.plancton);
 
-        musica.seekTo(0);
-        musica.setLooping(true);
+        music.seekTo(0);
+        music.setLooping(true);
     }
 
     public static MediaPlayerManager getInstance(Context context) {
@@ -36,29 +35,29 @@ public class MediaPlayerManager {
 
     public void setMediaPlayersVolume(boolean toggleButtonIsChecked) {
         if (!toggleButtonIsChecked) {
-            fim.setVolume(efeitosVolume, efeitosVolume);
-            musica.setVolume(musicaVolume, musicaVolume);
-            certo.setVolume(efeitosVolume, efeitosVolume);
+            endFX.setVolume(fxVolume, fxVolume);
+            music.setVolume(musicVolume, musicVolume);
+            hitFX.setVolume(fxVolume, fxVolume);
         } else {
-            fim.setVolume(0, 0);
-            musica.setVolume(0, 0);
-            certo.setVolume(0, 0);
+            endFX.setVolume(0, 0);
+            music.setVolume(0, 0);
+            hitFX.setVolume(0, 0);
         }
     }
 
-    public float getEfeitosVolume() {
-        return this.efeitosVolume;
+    public float getFxVolume() {
+        return this.fxVolume;
     }
 
-    public void setEfeitosVolume(float efeitosVolume) {
-        this.efeitosVolume = efeitosVolume;
+    public void setFxVolume(float fxVolume) {
+        this.fxVolume = fxVolume;
     }
 
-    public float getMusicaVolume() {
-        return this.musicaVolume;
+    public float getMusicVolume() {
+        return this.musicVolume;
     }
 
-    public void setMusicaVolume(float musicaVolume) {
-        this.musicaVolume = musicaVolume;
+    public void setMusicVolume(float musicVolume) {
+        this.musicVolume = musicVolume;
     }
 }

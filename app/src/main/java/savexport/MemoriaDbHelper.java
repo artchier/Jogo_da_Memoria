@@ -7,13 +7,13 @@ import android.provider.BaseColumns;
 
 public class MemoriaDbHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_ENTRIES =
-            "CREATE TABLE " + GameEntry.TABELA + " (" +
+            "CREATE TABLE " + GameEntry.TABLE_NAME + " (" +
                     GameEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                    GameEntry.INICIO + " DATETIME NOT NULL," +
-                    GameEntry.TJ + " TIME NOT NULL," +
-                    GameEntry.ACERTOS + " INTEGER NOT NULL," +
-                    GameEntry.DICAS + " INTEGER NOT NULL," +
-                    GameEntry.ERROS + " INTEGER NOT NULL)";
+                    GameEntry.START_TIME + " DATETIME NOT NULL," +
+                    GameEntry.GAME_TIME + " TIME NOT NULL," +
+                    GameEntry.HITS + " INTEGER NOT NULL," +
+                    GameEntry.TIPS + " INTEGER NOT NULL," +
+                    GameEntry.MISSES + " INTEGER NOT NULL)";
 
     public MemoriaDbHelper(Context paramContext) {
         super(paramContext, GameEntry.DATABASE_NAME, null, GameEntry.DATABASE_VERSION);
@@ -24,18 +24,18 @@ public class MemoriaDbHelper extends SQLiteOpenHelper {
     }
 
     public void onUpgrade(SQLiteDatabase db, int paramInt1, int paramInt2) {
-        db.execSQL("DROP TABLE IF EXISTS " + GameEntry.TABELA);
+        db.execSQL("DROP TABLE IF EXISTS " + GameEntry.TABLE_NAME);
         onCreate(db);
     }
 }
 
 final class GameEntry implements BaseColumns {
-    public static final String TABELA = "DADOS_PARTIDAS";
+    public static final String TABLE_NAME = "DADOS_PARTIDAS";
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "Memoria";
-    public static final String INICIO = "Início";
-    public static final String TJ = "[Tempo de jogo]";
-    public static final String ACERTOS = "Acertos";
-    public static final String DICAS = "Dicas";
-    public static final String ERROS = "Erros";
+    public static final String START_TIME = "Início";
+    public static final String GAME_TIME = "[Tempo de jogo]";
+    public static final String HITS = "Acertos";
+    public static final String TIPS = "Dicas";
+    public static final String MISSES = "Erros";
 }

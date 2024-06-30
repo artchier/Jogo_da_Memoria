@@ -9,7 +9,7 @@ import androidx.work.WorkManager;
 import java.util.ArrayList;
 
 import model.Game;
-import model.GravarDadosResposta;
+import model.WriteDataResponse;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -38,89 +38,32 @@ public class MemoriaRepository {
         memoria = retrofit.create(MemoriaService.class);
     }
 
-    public void gravarDados(String deviceUID, Game dadosPartida, Context context) {
-        ArrayList<Game> dados = new ArrayList<>();
-        dados.add(new Game(
-                dadosPartida.getInicio(),
-                dadosPartida.getDuracao(),
-                dadosPartida.getAcertos(),
-                dadosPartida.getDicas(),
-                dadosPartida.getErros()
+    public void writeData(String deviceUID, Game gameData, Context context) {
+        ArrayList<Game> data = new ArrayList<>();
+        data.add(new Game(
+                gameData.getInicio(),
+                gameData.getDuracao(),
+                gameData.getAcertos(),
+                gameData.getDicas(),
+                gameData.getErros()
         ));
-        Call<GravarDadosResposta> gravarDados = memoria.gravarDados(deviceUID, dados);
+        Call<WriteDataResponse> writeData = memoria.writeData(deviceUID, data);
 
-        gravarDados.enqueue(new Callback<GravarDadosResposta>() {
+        writeData.enqueue(new Callback<WriteDataResponse>() {
             @Override
-            public void onResponse(@NonNull Call<GravarDadosResposta> call, @NonNull Response<GravarDadosResposta> response) {
-                if (response.isSuccessful() && response.body().getGravados() == 1) {
+            public void onResponse(@NonNull Call<WriteDataResponse> call, @NonNull Response<WriteDataResponse> response) {
+                if (response.isSuccessful() && response.body().getSavedGames() == 1) {
                     Log.d("sucesso", "deu bom");
                 } else {
                     Log.d("sucesso", "deu ruim");
-                    WorkManager.getInstance(context).enqueue(WorkerUtils.addDataToRequest((dadosPartida.toString())));
+                    WorkManager.getInstance(context).enqueue(WorkerUtils.addDataToRequest((gameData.toString())));
                 }
             }
 
             @Override
-            public void onFailure(Call<GravarDadosResposta> call, Throwable t) {
+            public void onFailure(Call<WriteDataResponse> call, Throwable t) {
                 Log.d("", "");
             }
         });
     }
-
-    private void Teste() throws Exception {
-        throw new Exception();
-    }
-
-//    public void gravarDados(String deviceUID, ArrayList<Game> dados) {
-//        Call<GravarDadosResposta> gravarDados = memoria.gravarDados(deviceUID, dados);
-//
-//        gravarDados.enqueue(new Callback<GravarDadosResposta>() {
-//            @Override
-//            public void onResponse(@NonNull Call<GravarDadosResposta> call, @NonNull Response<GravarDadosResposta> response) {
-//                if (response.body() != null) {
-//                    switch (response.code()) {
-//                        case 200:
-//                            int gravados = response.body().getGravados();
-//
-//                            if (gravados == 1) {
-//                                Log.d("sucesso", "deu bom");
-//                            } else {
-//                                Log.d("sucesso", "deu ruim");
-//                            }
-//                            break;
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<GravarDadosResposta> call, Throwable t) {
-//
-//            }
-//        });
-//    }
-
-//    public List<PegarDadosResposta> pegarDados(String inicio, String fim, String idDispositivo) {
-//        final List<PegarDadosResposta> teste;
-//        Call<List<PegarDadosResposta>> pegarDados = memoria.pegarDados(inicio, fim, idDispositivo);
-//
-//        pegarDados.enqueue(new Callback<List<PegarDadosResposta>>() {
-//            @Override
-//            public void onResponse(@NonNull Call<List<PegarDadosResposta>> call, @NonNull Response<List<PegarDadosResposta>> response) {
-//                if (response.body() != null) {
-//                    switch (response.code()) {
-//                        case 200:
-//                            teste = response.body();
-//                            Log.d("sucesso", "deu bom no 2");
-//                            break;
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<List<PegarDadosResposta>> call, Throwable t) {
-//
-//            }
-//        });
-//        return null;
-//    }
 }
